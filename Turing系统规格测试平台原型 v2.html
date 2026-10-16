@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Turing · 系统规格测试平台 — 大屏版 v2</title>
+<style>
+/* ================= Tokens（沿用 v1 体系） ================= */
+:root{
+  --bg:#0a0c10;
+  --surface:#11141a;
+  --surface-2:#161a22;
+  --surface-3:#1d222c;
+  --border:#242a34;
+  --border-strong:#323a47;
+  --ink:#e8eaee;
+  --muted:#98a1ad;
+  --faint:#667080;
+  --accent:#e5484d;
+  --accent-soft:rgba(229,72,77,.14);
+  --ok:#3fb950;
+  --warn:#d29922;
+  --info:#58a6ff;
+  --chart-1:#56b6f2;
+  --chart-2:#e3b341;
+  --chart-3:#3fb950;
+  --chart-4:#f2779a;
+  --mono:"JetBrains Mono","Cascadia Code",Consolas,monospace;
+  --sans:"HarmonyOS Sans SC","PingFang SC","Microsoft YaHei UI","Microsoft YaHei",-apple-system,"Segoe UI",sans-serif;
+  --gap:12px;
+  --hd-h:56px;
+  --fs:clamp(11px,.32vw + 10px,13.5px);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:var(--sans);font-size:var(--fs);line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  display:flex;flex-direction:column;
+}
+::selection{background:rgba(229,72,77,.35)}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:none;background:none;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+a{color:var(--info);text-decoration:none}
+
+/* ================= 顶栏 ================= */
+.hd{
+  height:var(--hd-h);flex:none;display:flex;align-items:center;gap:16px;
+  padding:0 clamp(10px,1.2vw,24px);background:var(--surface);
+  border-bottom:1px solid var(--border);position:relative;z-index:40;
+}
+.hd::after{
+  content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent) 30%,var(--accent) 70%,transparent);
+  opacity:.55;
+}
+.brand{display:flex;align-items:center;gap:10px;flex:none}
+.brand-mark{
+  font-family:var(--mono);font-weight:700;font-size:15px;color:#fff;
+  background:var(--accent);border-radius:6px;padding:2px 8px;
+  box-shadow:0 0 14px rgba(229,72,77,.45);
+}
+.brand-name{font-size:15px;font-weight:700;letter-spacing:.5px;white-space:nowrap}
+.brand-sub{font-size:11px;color:var(--faint);white-space:nowrap}
+.hd-nav{display:flex;gap:2px;margin:0 auto}
+.hd-nav button{
+  padding:6px 14px;color:var(--muted);border-radius:6px;white-space:nowrap;
+  transition:color .15s,background .15s;
+}
+.hd-nav button:hover{color:var(--ink);background:var(--surface-2)}
+.hd-nav button.active{color:#ff9ea1;background:var(--accent-soft);font-weight:600}
+.hd-nav .tag{
+  font-size:10px;color:var(--warn);border:1px solid rgba(210,153,34,.4);
+  border-radius:3px;padding:0 4px;margin-left:5px;vertical-align:1px;
+}
+.hd-right{display:flex;align-items:center;gap:clamp(6px,1vw,16px);flex:none;font-size:12px;color:var(--muted)}
+.env-pill{
+  display:flex;align-items:center;gap:6px;border:1px solid var(--border-strong);
+  border-radius:999px;padding:3px 11px;background:var(--surface-2);color:var(--ink);white-space:nowrap;
+}
+.env-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 6px var(--ok)}
+.clock{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.5px;white-space:nowrap}
+.hd-run{font-family:var(--mono);font-size:11.5px;color:var(--faint);white-space:nowrap}
+
+/* ================= 屏幕骨架（无滚动） ================= */
+.view{flex:1;min-height:0;display:none;flex-direction:column;padding:var(--gap)}
+.view.on{display:flex}
+
+/* ---------- KPI 指标带 ---------- */
+.kpi-strip{flex:none;display:grid;gap:var(--gap);grid-template-columns:repeat(6,1fr);margin-bottom:var(--gap)}
+.kpi{
+  background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  padding:10px 14px 11px;min-width:0;position:relative;overflow:hidden;
+}
+.kpi::before{content:"";position:absolute;top:0;left:0;width:3px;height:100%;background:var(--accent);opacity:.75}
+.kpi .k-label{font-size:11px;color:var(--faint);letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi .k-val{
+  font-family:var(--mono);font-weight:700;font-size:clamp(19px,1.5vw,27px);
+  line-height:1.25;letter-spacing:-.5px;white-space:nowrap;
+}
+.kpi .k-val small{font-size:.44em;font-weight:500;color:var(--muted);margin-left:3px;letter-spacing:0}
+.kpi .k-sub{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ---------- 面板网格 ---------- */
+.grid{
+  flex:1;min-height:0;display:grid;gap:var(--gap);
+  grid-template-columns:288px 1fr 336px;
+  grid-template-rows:minmax(0,1.32fr) minmax(0,1fr);
+  grid-template-areas:
+    "filter main  bars"
+    "rank   rank  side";
+}
+.panel{
+  min-height:0;min-width:0;display:flex;flex-direction:column;
+  background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  position:relative;overflow:hidden;
+}
+.panel::before,.panel::after{content:"";position:absolute;width:10px;height:10px;pointer-events:none;opacity:.8}
+.panel::before{top:-1px;left:-1px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
+.panel::after{bottom:-1px;right:-1px;border-bottom:2px solid var(--accent);border-right:2px solid var(--accent)}
+.p-head{flex:none;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 14px;border-bottom:1px solid var(--border)}
+.p-title{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;white-space:nowrap}
+.p-title i{width:7px;height:7px;background:var(--accent);flex:none;box-shadow:0 0 8px rgba(229,72,77,.6)}
+.p-sub{font-size:11px;color:var(--faint)}
+.p-ctl{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.p-body{flex:1;min-height:0;position:relative}
+
+/* ---------- 控件 ---------- */
+select.ctl{
+  background:var(--surface-2);border:1px solid var(--border-strong);color:var(--ink);
+  border-radius:5px;padding:4px 7px;font-size:12px;font-family:inherit;max-width:200px;
+}
+.seg{display:flex;border:1px solid var(--border-strong);border-radius:5px;overflow:hidden}
+.seg button{padding:3px 10px;font-size:11.5px;color:var(--muted);background:var(--surface-2);white-space:nowrap}
+.seg button+button{border-left:1px solid var(--border-strong)}
+.seg button.on{background:var(--accent-soft);color:#ff9ea1;font-weight:600}
+.scen{display:flex;gap:2px;border:1px solid var(--border-strong);border-radius:6px;padding:2px;background:var(--surface-2)}
+.scen button{padding:3px 10px;border-radius:4px;font-size:11.5px;color:var(--muted);white-space:nowrap}
+.scen button.on{background:var(--surface-3);color:var(--ink);font-weight:600}
+
+/* ---------- 筛选面板 ---------- */
+.panel-filter{grid-area:filter}
+.f-body{overflow-y:auto;padding:12px 14px;scrollbar-width:none}
+.f-body::-webkit-scrollbar{display:none}
+.f-group{margin-bottom:13px}
+.f-label{font-size:11px;color:var(--faint);letter-spacing:1px;margin-bottom:7px;display:block}
+.model-row{
+  display:flex;align-items:flex-start;gap:8px;padding:6px 7px;border-radius:5px;
+  cursor:pointer;border:1px solid transparent;transition:background .12s;
+}
+.model-row:hover{background:var(--surface-2)}
+.model-row input{accent-color:var(--accent);width:13px;height:13px;flex:none;margin-top:2px}
+.model-row .m-name{font-size:12px;font-weight:500}
+.model-row .m-meta{font-size:10.5px;color:var(--faint);line-height:1.4}
+.model-row.off{opacity:.45}
+.chip-wrap{display:flex;flex-wrap:wrap;gap:5px}
+.chip{
+  font-size:11px;padding:3px 9px;border-radius:999px;border:1px solid var(--border-strong);
+  color:var(--muted);background:var(--surface-2);display:flex;align-items:center;gap:5px;white-space:nowrap;
+}
+.chip.on{border-color:currentColor;font-weight:500}
+.chip .sw{width:7px;height:7px;border-radius:50%;flex:none}
+.static-kv{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:11px}
+.static-kv dt{color:var(--faint)}
+.static-kv dd{color:var(--muted);text-align:right}
+.run-box{
+  margin-top:12px;padding:10px 11px;border:1px dashed var(--border-strong);
+  border-radius:6px;font-size:11.5px;color:var(--muted);background:var(--surface-2);
+}
+.run-box .r-date{font-size:12.5px;color:var(--ink);font-weight:600}
+.run-box .r-id{font-family:var(--mono);font-size:10.5px;color:var(--faint);margin:1px 0 5px}
+.link-btn{color:var(--info);font-size:11.5px;padding:0}
+.link-btn:hover{text-decoration:underline}
+
+/* ---------- 主图表面板 ---------- */
+.panel-main{grid-area:main}
+.legend{display:flex;gap:10px;flex-wrap:wrap}
+.legend button{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--muted)}
+.legend button .sw{width:8px;height:8px;border-radius:50%}
+.legend button.muted{opacity:.35}
+.chart-body{position:relative;width:100%;height:100%}
+#chart{width:100%;height:100%;display:block;cursor:crosshair}
+.tooltip{
+  position:absolute;pointer-events:none;background:#0e1116f2;border:1px solid var(--border-strong);
+  border-radius:6px;padding:9px 11px;font-size:11.5px;min-width:225px;
+  box-shadow:0 8px 24px rgba(0,0,0,.5);display:none;z-index:10;
+}
+.tooltip .tt-title{font-weight:600;margin-bottom:5px}
+.tooltip .tt-row{display:flex;justify-content:space-between;gap:16px;color:var(--muted)}
+.tooltip .tt-row b{color:var(--ink);font-weight:500;font-family:var(--mono)}
+.empty-overlay{
+  position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;
+  gap:7px;background:rgba(10,12,16,.78);color:var(--muted);font-size:12.5px;z-index:5;
+}
+.empty-overlay .big{font-size:14.5px;color:var(--ink);font-weight:600}
+.empty-overlay.show{display:flex}
+.axis-ctl{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+
+/* ---------- 柱图 / 趋势面板 ---------- */
+.panel-bars{grid-area:bars}
+.panel-side{grid-area:side}
+.side-tabs{display:none}
+.cv-fill{width:100%;height:100%;display:block}
+.panel-side .cv-wrap{position:absolute;inset:0;display:none}
+.panel-side .cv-wrap.on{display:block}
+
+/* ---------- 排行榜面板 ---------- */
+.panel-rank{grid-area:rank}
+.tbl-wrap{width:100%;height:100%;overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{
+  text-align:left;font-weight:600;color:var(--muted);font-size:11px;
+  padding:7px 10px;border-bottom:1px solid var(--border-strong);white-space:nowrap;
+  user-select:none;
+}
+thead th.sortable{cursor:pointer}
+thead th.sortable:hover{color:var(--ink)}
+thead th .arrow{font-size:9px;margin-left:3px;color:var(--accent)}
+tbody td{padding:6px 10px;border-bottom:1px solid var(--border);white-space:nowrap;vertical-align:middle}
+tbody tr:hover td{background:var(--surface-2)}
+tbody tr:last-child td{border-bottom:none}
+td.num,th.num{text-align:right}
+.badge{font-size:10.5px;border-radius:4px;padding:0 6px;font-weight:500}
+.badge.ok{color:var(--ok);background:rgba(63,185,80,.12);border:1px solid rgba(63,185,80,.3)}
+.badge.run{color:var(--warn);background:rgba(210,153,34,.1);border:1px solid rgba(210,153,34,.3)}
+.delta-up{color:var(--ok);font-family:var(--mono)}
+.delta-dn{color:#ff9ea1;font-family:var(--mono)}
+.fw-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px}
+.cfg-cell .cfg-main{font-weight:500}
+.cfg-cell .cfg-sub{font-size:10.5px;color:var(--faint);font-family:var(--mono)}
+
+/* ---------- 骨架视图（训练/算子/任务） ---------- */
+.skel{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;text-align:center;overflow:auto}
+.skel h2{font-size:clamp(17px,1.4vw,22px);font-weight:700;display:flex;align-items:center;gap:12px}
+.plan-grid{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:900px}
+.plan-chip{border:1px dashed var(--border-strong);border-radius:6px;padding:6px 12px;font-size:12px;color:var(--muted);background:var(--surface)}
+.plan-chip b{color:var(--ink);font-weight:500}
+.skel-desc{color:var(--muted);font-size:12.5px;max-width:640px}
+
+/* ---------- 弹窗 ---------- */.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;z-index:100;align-items:center;justify-content:center}
+.modal-bg.show{display:flex}
+.modal{
+  width:min(760px,94vw);max-height:82vh;display:flex;flex-direction:column;
+  background:var(--surface);border:1px solid var(--border-strong);border-radius:10px;
+  box-shadow:0 24px 64px rgba(0,0,0,.6);
+}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);flex:none}
+.modal-head h3{font-size:14px;font-weight:600}
+.modal-close{color:var(--faint);font-size:18px;line-height:1;padding:2px 6px;border-radius:4px}
+.modal-close:hover{color:var(--ink);background:var(--surface-3)}
+.modal-body{padding:14px 16px;overflow-y:auto;font-size:12px;color:var(--muted)}
+.modal-body::-webkit-scrollbar{width:6px}
+.modal-body::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:3px}
+.cl-entry{padding:9px 0;border-bottom:1px solid var(--border)}
+.cl-entry:last-child{border-bottom:none}
+.cl-date{font-family:var(--mono);font-size:11px;color:var(--info);margin-bottom:2px}
+.cl-text{color:var(--ink)}
+
+.ptabs{display:none} /* 基础隐藏；紧凑档媒体查询内覆写为 flex（媒体查询在后，优先级相同但顺序靠后生效） */
+
+/* ================= 响应式三档 ================= */
+/* 标准档（≤1759px）：右列收起，框架对比并入侧板页签，KPI 6→4 */
+@media (max-width:1759px){
+  .grid{
+    grid-template-columns:272px 1fr;
+    grid-template-rows:minmax(0,1.3fr) minmax(0,1fr);
+    grid-template-areas:
+      "filter main"
+      "rank   side";
+  }
+  .panel-bars{display:none}
+  .side-tabs{display:flex}
+  .kpi-strip{grid-template-columns:repeat(4,1fr)}
+  .kpi.k5,.kpi.k6{display:none}
+}
+/* 紧凑档（≤1099px）：面板改页签交互，KPI 6→3，无滚动 */
+@media (max-width:1099px){
+  .brand-sub{display:none}
+  .hd-run{display:none}
+  .hd-nav button{padding:5px 8px;font-size:12px}
+  .kpi-strip{grid-template-columns:repeat(3,1fr)}
+  .kpi.k4,.kpi.k5,.kpi.k6{display:none}
+  .kpi .k-val{font-size:clamp(17px,2.6vw,22px)}
+  .view{padding:10px}
+  .grid{display:block;position:relative}
+  .ptabs{
+    display:flex;gap:4px;flex:none;margin-bottom:10px;
+    border:1px solid var(--border-strong);border-radius:7px;padding:3px;background:var(--surface);width:fit-content;
+  }
+  .ptabs button{padding:5px 13px;border-radius:5px;font-size:12px;color:var(--muted)}
+  .ptabs button.on{background:var(--accent-soft);color:#ff9ea1;font-weight:600}
+  .panel{display:none;height:calc(100% - 44px)}
+  .panel.on{display:flex}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<!-- ================= 顶栏 ================= -->
+<header class="hd">
+  <div class="brand">
+    <span class="brand-mark">T</span>
+    <div class="brand-name">Turing <span class="brand-sub">系统规格测试平台</span></div>
+  </div>
+  <nav class="hd-nav" id="mainNav" aria-label="主导航">
+    <button data-view="train">训练性能<span class="tag">建设中</span></button>
+    <button data-view="infer" class="active">推理性能</button>
+    <button data-view="op">算子性能<span class="tag">建设中</span></button>
+    <button data-view="task">测试任务</button>
+  </nav>
+  <div class="hd-right">
+    <span class="env-pill"><span class="dot"></span>CANN 8.2.RC1</span>
+    <span class="clock" id="clock">--</span>
+    <span class="hd-run">RUN #47 · 昇腾集群 A</span>
+  </div>
+</header>
+
+<!-- ================= 视图：推理性能 ================= -->
+<div class="view on" id="view-infer">
+
+  <div class="kpi-strip" id="kpiStrip"></div>
+
+  <div class="ptabs" id="ptabs">
+    <button data-p="main" class="on">总览图表</button>
+    <button data-p="filter">筛选配置</button>
+    <button data-p="rank">排行榜</button>
+    <button data-p="side">趋势 / 对比</button>
+  </div>
+
+  <div class="grid">
+
+    <!-- 筛选配置 -->
+    <section class="panel panel-filter" data-p="filter">
+      <div class="p-head"><div class="p-title"><i></i>基准测试配置</div></div>
+      <div class="p-body f-body">
+        <div class="f-group">
+          <span class="f-label">模型</span>
+          <div id="modelFilter"></div>
+        </div>
+        <div class="f-group">
+          <span class="f-label">精度</span>
+          <div class="seg" id="precSeg">
+            <button data-v="all" class="on">全部</button>
+            <button data-v="FP8">FP8</button>
+            <button data-v="FP16">FP16</button>
+          </div>
+        </div>
+        <div class="f-group">
+          <span class="f-label">推理框架</span>
+          <div class="chip-wrap" id="fwFilter"></div>
+        </div>
+        <div class="f-group">
+          <span class="f-label">芯片配置</span>
+          <select class="ctl" id="chipSel" style="width:100%">
+            <option value="all">全部配置</option>
+            <option value="a2x8">Atlas 800I A2 ×8（910B4）</option>
+            <option value="a2x16">Atlas 800I A2 ×16（2 节点）</option>
+          </select>
+        </div>
+        <div class="f-group">
+          <span class="f-label">服务参数</span>
+          <dl class="static-kv">
+            <dt>输入 / 输出</dt><dd class="num">2048 / 2048</dd>
+            <dt>调度</dt><dd>continuous batching</dd>
+            <dt>采样</dt><dd class="num">temp 0.6 / top-p 0.95</dd>
+          </dl>
+        </div>
+        <div class="run-box">
+          <div class="r-date">2026-10-15</div>
+          <div class="r-id">RUN #47 · 固定序列</div>
+          <div>每个数据点 = 一次可复现测试任务，附环境快照（CANN / 固件 / 驱动）。</div>
+          <div style="margin-top:6px;display:flex;gap:12px">
+            <button class="link-btn" id="clOpen">变更日志</button>
+            <button class="link-btn" id="fullRankOpen">完整排行</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 主图表 -->
+    <section class="panel panel-main on" data-p="main">
+      <div class="p-head">
+        <div class="p-title"><i></i>推理性能对比</div>
+        <div class="scen" id="scenarioTabs">
+          <button data-s="fixed" class="on">固定序列</button>
+          <button data-s="agentic">智能体</button>
+          <button data-s="longctx">长上下文</button>
+        </div>
+        <div class="p-ctl"><div class="legend" id="legend"></div></div>
+      </div>
+      <div class="p-head">
+        <div class="axis-ctl">X
+          <select class="ctl" id="xSel">
+            <option value="interactivity" selected>交互性 tokens/s/用户</option>
+            <option value="ttft">TTFT P99 s</option>
+            <option value="tpot">TPOT P99 ms</option>
+            <option value="conc">并发</option>
+          </select>
+        </div>
+        <div class="axis-ctl">Y
+          <select class="ctl" id="ySel">
+            <option value="tput_card" selected>吞吐 tokens/s/卡</option>
+            <option value="tput_total">总吞吐 tokens/s</option>
+          </select>
+        </div>
+        <div class="seg" id="viewToggle">
+          <button class="on" data-v="scatter">散点</button>
+          <button data-v="bar">柱状</button>
+        </div>
+        <span class="p-sub" id="chartHint">悬停查看完整指标 · 基线 = MindIE 1.0.RC3 · FP8 · 最高并发</span>
+      </div>
+      <div class="p-body">
+        <div class="chart-body">
+          <canvas id="chart"></canvas>
+          <div class="empty-overlay" id="emptyOverlay">
+            <div class="big">该场景暂无数据</div>
+            <div>智能体 / 长上下文场景将在 RUN #48 起陆续上线</div>
+          </div>
+          <div class="tooltip" id="tooltip"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 框架对比柱图（宽屏独立面板） -->
+    <section class="panel panel-bars">
+      <div class="p-head">
+        <div class="p-title"><i></i>框架吞吐对比</div>
+        <span class="p-sub">tokens/s/卡 · FP8 · 并发 256</span>
+      </div>
+      <div class="p-body"><canvas id="barChart" class="cv-fill"></canvas></div>
+    </section>
+
+    <!-- 排行榜 -->
+    <section class="panel panel-rank" data-p="rank">
+      <div class="p-head">
+        <div class="p-title"><i></i>排行榜</div>
+        <span class="p-sub" id="rankSub">按吞吐量排序 · 点击列头切换</span>
+        <div class="p-ctl"><button class="link-btn" id="fullRankOpen2">完整排行</button></div>
+      </div>
+      <div class="p-body tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th class="sortable" data-k="framework">配置</th>
+              <th class="sortable" data-k="precision">精度</th>
+              <th class="sortable num" data-k="conc">并发</th>
+              <th class="sortable num" data-k="tput_card">吞吐 tokens/s/卡</th>
+              <th class="sortable num" data-k="interactivity">交互性 tok/s/用户</th>
+              <th class="sortable num" data-k="ttft">TTFT P99 s</th>
+              <th class="sortable num" data-k="tpot">TPOT P99 ms</th>
+              <th class="sortable num" data-k="hbm">HBM GB</th>
+              <th class="sortable num" data-k="delta">基线 Δ</th>
+              <th>状态</th>
+            </tr>
+          </thead>
+          <tbody id="boardBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 趋势 / 对比（标准档带页签切换） -->
+    <section class="panel panel-side" data-p="side">
+      <div class="p-head">
+        <div class="p-title"><i></i><span id="sideTitle">吞吐 · 并发扩展性</span></div>
+        <div class="p-ctl">
+          <div class="seg side-tabs" id="sideTabs">
+            <button data-c="trend" class="on">并发趋势</button>
+            <button data-c="bars">框架对比</button>
+          </div>
+          <span class="p-sub">Qwen3-32B · FP8 · tokens/s/卡</span>
+        </div>
+      </div>
+      <div class="p-body">
+        <div class="cv-wrap on" data-c="trend"><canvas id="trendChart" class="cv-fill"></canvas></div>
+        <div class="cv-wrap" data-c="bars"><canvas id="sideBarChart" class="cv-fill"></canvas></div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- ================= 视图：训练性能（骨架） ================= -->
+<div class="view" id="view-train">
+  <div class="skel">
+    <h2>训练性能 <span class="badge run">建设中 · 计划 RUN #52 起</span></h2>
+    <p class="skel-desc">面向大模型预训练与微调场景：训练框架（PyTorch + torch-npu、MindSpeed）、并行策略（TP / PP / DP / EP）与不同序列长度下的集群训练效率。</p>
+    <div class="plan-grid">
+      <span class="plan-chip"><b>tokens/s/卡</b> 训练吞吐</span>
+      <span class="plan-chip"><b>MFU %</b> 昇腾矩阵算力利用率</span>
+      <span class="plan-chip"><b>step time</b> 单步耗时拆解</span>
+      <span class="plan-chip"><b>loss 收敛曲线</b> 跨框架对比</span>
+      <span class="plan-chip"><b>并行策略</b> TP/PP/DP/EP</span>
+      <span class="plan-chip"><b>HCCL 通信占比</b> overlap 分析</span>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 视图：算子性能（骨架） ================= -->
+<div class="view" id="view-op">
+  <div class="skel">
+    <h2>算子性能 <span class="badge run">建设中 · 计划 RUN #50 起</span></h2>
+    <p class="skel-desc">基于 msprof 采集的单算子微基准（MatMul / FlashAttention / LayerNorm / AllReduce 等），按 shape、dtype、芯片与 CANN 版本横向对比，支撑版本升级的算子级回归验证。</p>
+    <div class="plan-grid">
+      <span class="plan-chip"><b>算子耗时</b> aicore / aivector 拆解</span>
+      <span class="plan-chip"><b>shape 扫描</b> M/N/K 曲线</span>
+      <span class="plan-chip"><b>版本回归</b> CANN 版本间 Δ</span>
+      <span class="plan-chip"><b>带宽利用率</b> HBM / L2</span>
+      <span class="plan-chip"><b>算子融合建议</b> 自动推荐</span>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 视图：测试任务（骨架） ================= -->
+<div class="view" id="view-task">
+  <div class="skel">
+    <h2>测试任务 <span class="badge run">建设中</span></h2>
+    <p class="skel-desc">基准测试执行入口与历史记录：每个数据点可追溯至一次任务运行，含完整环境快照与日志，支持一键复现。</p>
+    <div class="plan-grid">
+      <span class="plan-chip"><b>任务队列</b> 定时 / 手动触发</span>
+      <span class="plan-chip"><b>环境快照</b> CANN / 固件 / 驱动</span>
+      <span class="plan-chip"><b>一键复现</b> 相同环境重跑</span>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 弹窗 ================= -->
+<div class="modal-bg" id="clModal">
+  <div class="modal" role="dialog" aria-label="变更日志">
+    <div class="modal-head"><h3>变更日志 · 推理性能</h3><button class="modal-close" data-close="clModal" aria-label="关闭">×</button></div>
+    <div class="modal-body">
+      <div class="cl-entry"><div class="cl-date">2026-10-15 · RUN #47</div><div class="cl-text">新增 SGLang-Ascend 0.5 固定序列数据；MindIE 升级至 1.0.RC3 并复测全量并发档位。</div></div>
+      <div class="cl-entry"><div class="cl-date">2026-09-28 · RUN #41</div><div class="cl-text">vLLM-Ascend 升级至 0.9.1；DeepSeek-V3 增补 16 卡（2 节点）配置。</div></div>
+      <div class="cl-entry"><div class="cl-date">2026-09-12 · RUN #36</div><div class="cl-text">CANN 升级至 8.2.RC1，历史数据在新版本下重跑；指标口径统一为 P99。</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="rankModal">
+  <div class="modal" role="dialog" aria-label="完整排行">
+    <div class="modal-head"><h3>完整排行 · 当前筛选</h3><button class="modal-close" data-close="rankModal" aria-label="关闭">×</button></div>
+    <div class="modal-body">
+      <table>
+        <thead><tr>
+          <th>#</th><th>配置</th><th>精度</th><th class="num">并发</th><th class="num">吞吐/卡</th>
+          <th class="num">交互性</th><th class="num">TTFT P99</th><th class="num">TPOT P99</th><th class="num">HBM</th><th class="num">基线 Δ</th><th>状态</th>
+        </tr></thead>
+        <tbody id="rankModalBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================= 数据（示例数据，仅用于界面演示） ================= */
+const FRAMEWORKS = {
+  "MindIE 1.0.RC3":   "#56b6f2",
+  "vLLM-Ascend 0.9.1":"#e3b341",
+  "SGLang-Ascend 0.5":"#3fb950",
+  "MindIE 0.9":       "#f2779a"
+};
+const MODELS = {
+  "Qwen3-32B":       {meta:"32B · Dense · Atlas 800I A2 ×8", chip:"a2x8"},
+  "DeepSeek-V3-0324":{meta:"671B · MoE 37B 激活 · Atlas 800I A2 ×16", chip:"a2x16"}
+};
+const DATA = [
+  {model:"Qwen3-32B", framework:"MindIE 1.0.RC3",   precision:"FP8",  conc:256, tput_total:8850, tput_card:1106, ttft:3.4, tpot:27, hbm:47, status:"ok",  run:"#47"},
+  {model:"Qwen3-32B", framework:"MindIE 1.0.RC3",   precision:"FP8",  conc:128, tput_total:6400, tput_card:800,  ttft:2.4, tpot:21, hbm:45, status:"ok",  run:"#47"},
+  {model:"Qwen3-32B", framework:"MindIE 1.0.RC3",   precision:"FP8",  conc:64,  tput_total:3750, tput_card:469,  ttft:1.7, tpot:16, hbm:44, status:"ok",  run:"#47"},
+  {model:"Qwen3-32B", framework:"MindIE 1.0.RC3",   precision:"FP16", conc:256, tput_total:6400, tput_card:800,  ttft:4.6, tpot:38, hbm:55, status:"ok",  run:"#47"},
+  {model:"Qwen3-32B", framework:"vLLM-Ascend 0.9.1",precision:"FP8",  conc:256, tput_total:8100, tput_card:1013, ttft:3.8, tpot:30, hbm:49, status:"ok",  run:"#47"},
+  {model:"Qwen3-32B", framework:"vLLM-Ascend 0.9.1",precision:"FP8",  conc:128, tput_total:5850, tput_card:731,  ttft:2.7, tpot:23, hbm:47, status:"ok",  run:"#47"},
+  {model:"Qwen3-32B", framework:"vLLM-Ascend 0.9.1",precision:"FP8",  conc:64,  tput_total:3300, tput_card:413,  ttft:1.9, tpot:18, hbm:46, status:"ok",  run:"#47"},
+  {model:"Qwen3-32B", framework:"SGLang-Ascend 0.5",precision:"FP8",  conc:256, tput_total:7650, tput_card:956,  ttft:4.1, tpot:32, hbm:50, status:"run", run:"#47"},
+  {model:"Qwen3-32B", framework:"MindIE 0.9",       precision:"FP8",  conc:256, tput_total:7900, tput_card:988,  ttft:3.9, tpot:31, hbm:48, status:"ok",  run:"#41"},
+  {model:"DeepSeek-V3-0324", framework:"MindIE 1.0.RC3",   precision:"FP8", conc:128, tput_total:3150, tput_card:197, ttft:6.8, tpot:39, hbm:60, status:"ok", run:"#41"},
+  {model:"DeepSeek-V3-0324", framework:"vLLM-Ascend 0.9.1",precision:"FP8", conc:128, tput_total:2780, tput_card:174, ttft:7.6, tpot:45, hbm:61, status:"ok", run:"#41"}
+];
+DATA.forEach(d => d.interactivity = +(d.tput_total / d.conc).toFixed(1));
+/* 基线：每模型取 MindIE 1.0.RC3 · FP8 · 最高并发 */
+const BASELINE = {};
+DATA.filter(d => d.framework === "MindIE 1.0.RC3" && d.precision === "FP8")
+    .forEach(d => { if(!BASELINE[d.model] || d.conc > BASELINE[d.model].conc) BASELINE[d.model] = d; });
+DATA.forEach(d => d.delta = Math.round((d.tput_card / BASELINE[d.model].tput_card - 1) * 100));
+
+const METRICS = {
+  interactivity:{label:"交互性", unit:"tokens/s/用户", fmt:v=>v.toFixed(1)},
+  ttft:{label:"TTFT P99", unit:"s", fmt:v=>v.toFixed(1)},
+  tpot:{label:"TPOT P99", unit:"ms", fmt:v=>v.toFixed(0)},
+  conc:{label:"并发", unit:"", fmt:v=>v.toFixed(0)},
+  tput_card:{label:"吞吐量", unit:"tokens/s/卡", fmt:v=>v.toLocaleString()},
+  tput_total:{label:"总吞吐量", unit:"tokens/s", fmt:v=>v.toLocaleString()}
+};
+
+/* ================= 状态 ================= */
+const state = {
+  view:"infer", scenario:"fixed",
+  models:new Set(Object.keys(MODELS)),
+  precision:"all",
+  frameworks:new Set(Object.keys(FRAMEWORKS)),
+  chip:"all",
+  x:"interactivity", y:"tput_card",
+  chartMode:"scatter",
+  sortKey:"tput_card", sortDir:-1,
+  compact:false
+};
+
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const MONO = getComputedStyle(document.body).getPropertyValue("--mono").trim();
+const SANS = getComputedStyle(document.body).getPropertyValue("--sans").trim();
+
+function filtered(){
+  return DATA.filter(d =>
+    state.models.has(d.model) &&
+    (state.precision === "all" || d.precision === state.precision) &&
+    state.frameworks.has(d.framework) &&
+    (state.chip === "all" || MODELS[d.model].chip === state.chip)
+  );
+}
+
+/* ================= 时钟 ================= */
+function tick(){
+  const n = new Date(), p = v => String(v).padStart(2,"0");
+  $("#clock").textContent = `${n.getFullYear()}-${p(n.getMonth()+1)}-${p(n.getDate())} ${p(n.getHours())}:${p(n.getMinutes())}:${p(n.getSeconds())}`;
+}
+setInterval(tick, 1000); tick();
+
+/* ================= KPI 指标带 ================= */
+function renderKPI(){
+  const d = filtered();
+  const ok = d.filter(x=>x.status==="ok").length;
+  const peak = d.length ? d.reduce((a,b)=>a.tput_card>b.tput_card?a:b) : null;
+  const inter = d.length ? d.reduce((a,b)=>a.interactivity>b.interactivity?a:b) : null;
+  const ttft  = d.length ? d.reduce((a,b)=>a.ttft<b.ttft?a:b) : null;
+  const tpot  = d.length ? d.reduce((a,b)=>a.tpot<b.tpot?a:b) : null;
+  const hbm   = d.length ? d.reduce((a,b)=>a.hbm>b.hbm?a:b) : null;
+  const tiles = [
+    {cls:"k1", label:"峰值吞吐", val: peak?peak.tput_card.toLocaleString():"—", unit:"tok/s/卡", sub: peak?peak.framework:"无数据"},
+    {cls:"k2", label:"峰值交互性", val: inter?inter.interactivity:"—", unit:"tok/s/用户", sub: inter?inter.framework+" · 并发 "+inter.conc:"无数据"},
+    {cls:"k3", label:"最低 TTFT P99", val: ttft?ttft.ttft:"—", unit:"s", sub: ttft?ttft.framework:"无数据"},
+    {cls:"k4", label:"最低 TPOT P99", val: tpot?tpot.tpot:"—", unit:"ms", sub: tpot?tpot.framework:"无数据"},
+    {cls:"k5", label:"HBM 峰值占用", val: hbm?hbm.hbm:"—", unit:"/ 64 GB", sub: hbm?hbm.model:"无数据"},
+    {cls:"k6", label:"数据点", val: d.length?ok+" / "+d.length:"—", unit:"已验证", sub:"RUN #47 · 固定序列"}
+  ];
+  $("#kpiStrip").innerHTML = tiles.map(t=>`
+    <div class="kpi ${t.cls}">
+      <div class="k-label">${t.label}</div>
+      <div class="k-val">${t.val}<small>${t.unit}</small></div>
+      <div class="k-sub">${t.sub}</div>
+    </div>`).join("");
+}
+
+/* ================= 筛选侧板 ================= */
+function renderModels(){
+  $("#modelFilter").innerHTML = Object.entries(MODELS).map(([name,m]) => `
+    <label class="model-row ${state.models.has(name)?"":"off"}">
+      <input type="checkbox" data-model="${name}" ${state.models.has(name)?"checked":""}>
+      <div>
+        <div class="m-name">${name}</div>
+        <div class="m-meta">${m.meta}</div>
+      </div>
+    </label>`).join("");
+  $$("#modelFilter input").forEach(cb => cb.addEventListener("change", e => {
+    e.target.checked ? state.models.add(e.target.dataset.model) : state.models.delete(e.target.dataset.model);
+    renderModels(); renderAll();
+  }));
+}
+function renderFwChips(){
+  $("#fwFilter").innerHTML = Object.entries(FRAMEWORKS).map(([name,c]) => `
+    <button class="chip ${state.frameworks.has(name)?"on":""}" data-fw="${name}" style="color:${state.frameworks.has(name)?c:""}">
+      <span class="sw" style="background:${c}"></span>${name}
+    </button>`).join("");
+  $$("#fwFilter .chip").forEach(b => b.addEventListener("click", () => {
+    const f = b.dataset.fw;
+    state.frameworks.has(f) ? state.frameworks.delete(f) : state.frameworks.add(f);
+    renderFwChips(); renderAll();
+  }));
+}
+
+/* ================= 画布工具 ================= */
+function prep(cv){
+  const dpr = window.devicePixelRatio||1;
+  const w = cv.clientWidth, h = cv.clientHeight;
+  if(!w || !h) return null;
+  cv.width = w*dpr; cv.height = h*dpr;
+  const c = cv.getContext("2d");
+  c.setTransform(dpr,0,0,dpr,0,0);
+  c.clearRect(0,0,w,h);
+  return {c,w,h};
+}
+function niceTicks(min,max,n=5){
+  if(min===max){min-=1;max+=1}
+  const span=max-min, step0=span/n, mag=Math.pow(10,Math.floor(Math.log10(step0)));
+  const norm=step0/mag; let step;
+  if(norm<1.5)step=1; else if(norm<3)step=2; else if(norm<7)step=5; else step=10;
+  step*=mag;
+  const t=[]; for(let v=Math.ceil(min/step)*step; v<=max+1e-9; v+=step) t.push(v);
+  return t;
+}
+const fmtTick = v => Math.abs(v)>=1000 ? (v/1000).toFixed(v%1000?1:0)+"k" : v.toFixed(Math.abs(v)<10&&v%1?1:0);
+function grid(c,x0,x1,y0,y1,xmin,xmax,ymin,ymax,X,Y){
+  c.font="10.5px "+MONO; c.strokeStyle="#212731"; c.fillStyle="#667080"; c.lineWidth=1;
+  niceTicks(xmin,xmax).forEach(v=>{const x=X(v);c.beginPath();c.moveTo(x,y0);c.lineTo(x,y1);c.stroke();
+    c.textAlign="center";c.fillText(fmtTick(v),x,y1+14);});
+  niceTicks(ymin,ymax).forEach(v=>{const y=Y(v);c.beginPath();c.moveTo(x0,y);c.lineTo(x1,y);c.stroke();
+    c.textAlign="right";c.fillText(fmtTick(v),x0-6,y+3);});
+}
+
+/* ================= 主图表（散点 / 柱状） ================= */
+const canvas = $("#chart");
+let pts = [], hoverIdx = -1;
+
+function drawMain(){
+  const p = prep(canvas); if(!p) return;
+  const {c,w,h} = p;
+  const data = filtered();
+  $("#emptyOverlay").classList.toggle("show", data.length===0);
+  if(!data.length){pts=[];return}
+  const mL=58,mR=14,mT=12,mB=36;
+  const xs=data.map(d=>d[state.x]), ys=data.map(d=>d[state.y]);
+  let xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys);
+  const padx=(xmax-xmin)*.08||1, pady=(ymax-ymin)*.1||1;
+  xmin-=padx;xmax+=padx;ymin-=pady;ymax+=pady;
+  if(state.y==="tput_card"||state.y==="tput_total") ymin=0;
+  const X=v=>mL+(v-xmin)/(xmax-xmin)*(w-mL-mR);
+  const Y=v=>h-mB-(v-ymin)/(ymax-ymin)*(h-mT-mB);
+  grid(c,mL,w-mR,mT,h-mB,xmin,xmax,ymin,ymax,X,Y);
+  c.fillStyle="#98a1ad"; c.font="11px "+SANS; c.textAlign="center";
+  const xm=METRICS[state.x], ym=METRICS[state.y];
+  c.fillText(xm.label+"（"+xm.unit+"）",(mL+w-mR)/2,h-4);
+  c.save();c.translate(10,(mT+h-mB)/2);c.rotate(-Math.PI/2);
+  c.fillText(ym.label+"（"+ym.unit+"）",0,0);c.restore();
+
+  if(state.chartMode==="bar"){
+    const bw=Math.min(48,(w-mL-mR)/data.length*.55);
+    data.forEach((d,i)=>{
+      const cx=mL+(i+.5)*(w-mL-mR)/data.length;
+      const y0=Y(Math.max(ymin,0)), y1=Y(d[state.y]);
+      const yTop=Math.min(y0,y1), hh=Math.abs(y1-y0);
+      c.fillStyle=FRAMEWORKS[d.framework];
+      c.beginPath();
+      if(c.roundRect) c.roundRect(cx-bw/2,yTop,bw,hh,[4,4,0,0]); else c.rect(cx-bw/2,yTop,bw,hh);
+      c.fill();
+      if(hoverIdx===i){c.strokeStyle="#fff";c.lineWidth=1.5;c.strokeRect(cx-bw/2-1.5,yTop-1.5,bw+3,hh+3)}
+      c.fillStyle="#e8eaee";c.font="10.5px "+MONO;c.textAlign="center";
+      c.fillText(ym.fmt(d[state.y]),cx,yTop-5);
+    });
+    pts=data.map((d,i)=>({d,px:mL+(i+.5)*(w-mL-mR)/data.length,py:Y(d[state.y])}));
+  } else {
+    pts=data.map(d=>({d,px:X(d[state.x]),py:Y(d[state.y])}));
+    pts.forEach((pt,i)=>{
+      c.beginPath();c.arc(pt.px,pt.py,i===hoverIdx?7.5:5.5,0,Math.PI*2);
+      c.fillStyle=FRAMEWORKS[pt.d.framework];c.fill();
+      c.lineWidth=i===hoverIdx?2.5:1.5;c.strokeStyle=i===hoverIdx?"#fff":"#0a0c10";c.stroke();
+    });
+  }
+}
+
+const tip=$("#tooltip");
+canvas.addEventListener("mousemove",e=>{
+  const r=canvas.getBoundingClientRect(), mx=e.clientX-r.left, my=e.clientY-r.top;
+  let best=-1,bd=14;
+  pts.forEach((p,i)=>{const dd=Math.hypot(mx-p.px,my-p.py);if(dd<bd){bd=dd;best=i}});
+  if(best>=0){
+    const d=pts[best].d;
+    tip.innerHTML=`
+      <div class="tt-title">${d.framework} · ${d.model}</div>
+      ${[["精度",d.precision],["并发",d.conc],["吞吐量",d.tput_card.toLocaleString()+" tok/s/卡"],
+         ["总吞吐",d.tput_total.toLocaleString()+" tok/s"],["交互性",d.interactivity+" tok/s/用户"],
+         ["TTFT P99",d.ttft+" s"],["TPOT P99",d.tpot+" ms"],["HBM",d.hbm+" / 64 GB"],["运行",d.run]]
+        .map(([k,v])=>`<div class="tt-row"><span>${k}</span><b>${v}</b></div>`).join("")}`;
+    tip.style.display="block";
+    tip.style.left=Math.min(mx+14,r.width-tip.offsetWidth-8)+"px";
+    tip.style.top=Math.max(4,my-40)+"px";
+    canvas.style.cursor="pointer";
+    hoverIdx=best; drawMain();
+    /* 重画高亮环（drawMain 已按 hoverIdx 放大，再补白描边） */
+    const pt=pts[best];
+    if(state.chartMode==="scatter"){
+      const c=canvas.getContext("2d");
+      c.beginPath();c.arc(pt.px,pt.py,9.5,0,Math.PI*2);
+      c.strokeStyle="#fff";c.lineWidth=1.2;c.setLineDash([3,3]);c.stroke();c.setLineDash([]);
+    }
+  } else { tip.style.display="none"; canvas.style.cursor="crosshair"; drawMain(); }
+});
+canvas.addEventListener("mouseleave",()=>{tip.style.display="none";drawMain()});
+
+/* ================= 框架对比柱图 ================= */
+function drawBars(cv){
+  const p = prep(cv); if(!p) return;
+  const {c,w,h} = p;
+  /* 每框架取 FP8 · 并发 256 的吞吐（Qwen3-32B 口径） */
+  const rows = Object.keys(FRAMEWORKS)
+    .map(f => DATA.find(d => d.framework===f && d.precision==="FP8" && d.conc===256 && d.model==="Qwen3-32B"))
+    .filter(Boolean)
+    .sort((a,b)=>b.tput_card-a.tput_card);
+  if(!rows.length) return;
+  const base = BASELINE["Qwen3-32B"].tput_card;
+  const mL=44,mR=64,mT=14,mB=10;
+  const max=rows[0].tput_card*1.12;
+  const bh=Math.min(30,(h-mT-mB)/rows.length*.56);
+  rows.forEach((d,i)=>{
+    const cy=mT+(i+.5)*(h-mT-mB)/rows.length;
+    const bw=(w-mL-mR)*d.tput_card/max;
+    const g=c.createLinearGradient(mL,0,mL+bw,0);
+    g.addColorStop(0,FRAMEWORKS[d.framework]+"55");
+    g.addColorStop(1,FRAMEWORKS[d.framework]);
+    c.fillStyle=g;
+    c.beginPath();
+    if(c.roundRect) c.roundRect(mL,cy-bh/2,bw,bh,3); else c.rect(mL,cy-bh/2,bw,bh);
+    c.fill();
+    c.fillStyle="#98a1ad";c.font="10.5px "+SANS;c.textAlign="right";
+    c.fillText(d.framework.replace(" 0.9.1","").replace(" 0.5","").replace(" 1.0.RC3","").replace(" 0.9",""),mL-6,cy+3.5);
+    c.fillStyle="#e8eaee";c.font="10.5px "+MONO;c.textAlign="left";
+    const dl=d.delta>=0?"":"";
+    c.fillText(d.tput_card.toLocaleString(),mL+bw+8,cy+3.5);
+    c.fillStyle=d.delta>=0?"#3fb950":"#ff9ea1";
+    c.fillText((d.delta>=0?"+":"")+d.delta+"%",mL+bw+8,cy+14.5);
+  });
+}
+
+/* ================= 并发扩展趋势 ================= */
+function drawTrend(cv){
+  const p = prep(cv); if(!p) return;
+  const {c,w,h} = p;
+  const rows = DATA.filter(d=>d.model==="Qwen3-32B"&&d.precision==="FP8");
+  const concs=[...new Set(rows.map(d=>d.conc))].sort((a,b)=>a-b);
+  if(!concs.length) return;
+  const mL=52,mR=16,mT=14,mB=30;
+  const ymin=0, ymax=Math.max(...rows.map(d=>d.tput_card))*1.12;
+  const X=v=>mL+concs.indexOf(v)/(concs.length-1||1)*(w-mL-mR);
+  const Y=v=>h-mB-(v-ymin)/(ymax-ymin)*(h-mT-mB);
+  grid(c,mL,w-mR,mT,h-mB,0,concs[concs.length-1],ymin,ymax,X,Y);
+  c.fillStyle="#98a1ad";c.font="10.5px "+SANS;c.textAlign="center";
+  c.fillText("并发用户数",(mL+w-mR)/2,h-4);
+  Object.keys(FRAMEWORKS).forEach(f=>{
+    const series=rows.filter(d=>d.framework===f).sort((a,b)=>a.conc-b.conc);
+    if(!series.length) return;
+    const col=FRAMEWORKS[f];
+    if(series.length>1){
+      c.strokeStyle=col;c.lineWidth=2;c.globalAlpha=.85;c.beginPath();
+      series.forEach((d,i)=>{const x=X(d.conc),y=Y(d.tput_card);i?c.lineTo(x,y):c.moveTo(x,y)});
+      c.stroke();c.globalAlpha=1;
+      /* 斜率标注：64→256 扩展效率 */
+      const eff=Math.round((series[series.length-1].tput_card/series[0].tput_card)/(series[series.length-1].conc/series[0].conc)*100);
+      const xm=(X(series[0].conc)+X(series[series.length-1].conc))/2;
+      const ym=(Y(series[0].tput_card)+Y(series[series.length-1].tput_card))/2;
+      c.fillStyle=col;c.font="10px "+MONO;c.textAlign="center";
+      c.fillText("扩展效率 "+eff+"%",xm,ym-14);
+    }
+    series.forEach(d=>{
+      c.beginPath();c.arc(X(d.conc),Y(d.tput_card),4.5,0,Math.PI*2);
+      c.fillStyle=col;c.fill();c.lineWidth=1.5;c.strokeStyle="#0a0c10";c.stroke();
+    });
+  });
+}
+
+/* ================= 排行榜 ================= */
+function rowHTML(d,i){
+  return `<tr>
+    <td class="num" style="color:var(--faint)">${i+1}</td>
+    <td class="cfg-cell">
+      <div class="cfg-main"><span class="fw-dot" style="background:${FRAMEWORKS[d.framework]}"></span>${d.framework}</div>
+      <div class="cfg-sub">${d.model}</div>
+    </td>
+    <td>${d.precision}</td>
+    <td class="num">${d.conc}</td>
+    <td class="num" style="font-weight:600">${d.tput_card.toLocaleString()}</td>
+    <td class="num">${d.interactivity}</td>
+    <td class="num">${d.ttft}</td>
+    <td class="num">${d.tpot}</td>
+    <td class="num">${d.hbm}</td>
+    <td class="num ${d.delta>=0?"delta-up":"delta-dn"}">${d.delta>=0?"+":""}${d.delta}%</td>
+    <td><span class="badge ${d.status==="ok"?"ok":"run"}">${d.status==="ok"?"已验证":"复测中"}</span></td>
+  </tr>`;
+}
+function sortedRows(){
+  return [...filtered()].sort((a,b)=>{
+    const k=state.sortKey, va=a[k], vb=b[k];
+    return (typeof va==="string"? va.localeCompare(vb) : va-vb)*state.sortDir;
+  });
+}
+function renderTable(){
+  const rows=sortedRows();
+  const tb=$("#boardBody");
+  tb.innerHTML = rows.map(rowHTML).join("")
+    || `<tr><td colspan="11" style="color:var(--faint);text-align:center;padding:20px">当前筛选条件下无数据</td></tr>`;
+  /* 按面板实际高度裁行：最后一格留给「仅显示前 N 条」注记，避免滚动/裁切 */
+  const wrap=document.querySelector(".panel-rank .tbl-wrap");
+  const thead=wrap.querySelector("thead");
+  const rowH=tb.firstElementChild?tb.firstElementChild.offsetHeight:29;
+  const theadH=thead?thead.offsetHeight:30;
+  let N = wrap.clientHeight>0
+    ? Math.max(3,Math.floor((wrap.clientHeight-theadH)/rowH)-1)
+    : 4; /* 面板隐藏（紧凑档未激活）时的兜底 */
+  const trs=[...tb.children];
+  trs.forEach((tr,i)=>{ if(i>=N-1) tr.style.display="none"; });
+  if(rows.length>N-1){
+    tb.insertAdjacentHTML("beforeend",
+      `<tr><td colspan="11" style="text-align:center;padding:3px;color:var(--faint);font-size:11px">仅显示前 ${N-1} 条 · 共 ${rows.length} 条 · 完整排行见弹窗</td></tr>`);
+  }
+  $("#rankModalBody").innerHTML = rows.map(rowHTML).join("")
+    || `<tr><td colspan="11" style="color:var(--faint);text-align:center;padding:20px">当前筛选条件下无数据</td></tr>`;
+  $$(".panel-rank thead th.sortable").forEach(th=>{
+    th.querySelector(".arrow")?.remove();
+    if(th.dataset.k===state.sortKey)
+      th.insertAdjacentHTML("beforeend",`<span class="arrow">${state.sortDir<0?"▼":"▲"}</span>`);
+  });
+}
+$$(".panel-rank thead th.sortable").forEach(th=>th.addEventListener("click",()=>{
+  const k=th.dataset.k;
+  if(state.sortKey===k) state.sortDir*=-1; else {state.sortKey=k; state.sortDir=(k==="framework"||k==="precision")?1:-1;}
+  renderTable();
+}));
+
+/* ================= 图例 ================= */
+function renderLegend(){
+  $("#legend").innerHTML=Object.entries(FRAMEWORKS).map(([name,c])=>`
+    <button class="${state.frameworks.has(name)?"":"muted"}" data-fw="${name}">
+      <span class="sw" style="background:${c}"></span>${name}
+    </button>`).join("");
+  $$("#legend button").forEach(b=>b.addEventListener("click",()=>{
+    const f=b.dataset.fw;
+    state.frameworks.has(f)?state.frameworks.delete(f):state.frameworks.add(f);
+    renderLegend();renderFwChips();renderAll();
+  }));
+}
+
+/* ================= 总入口 ================= */
+function renderAll(){
+  renderKPI(); drawMain(); drawBars($("#barChart")); drawBars($("#sideBarChart"));
+  drawTrend($("#trendChart")); renderTable();
+}
+
+/* ================= 事件绑定 ================= */
+$$("#mainNav button").forEach(b=>b.addEventListener("click",()=>{
+  state.view=b.dataset.view;
+  $$("#mainNav button").forEach(x=>x.classList.toggle("active",x===b));
+  ["train","infer","op","task"].forEach(v=>$("#view-"+v).classList.toggle("on",v===state.view));
+}));
+$$("#scenarioTabs button").forEach(b=>b.addEventListener("click",()=>{
+  state.scenario=b.dataset.s;
+  $$("#scenarioTabs button").forEach(x=>x.classList.toggle("on",x===b));
+  const hasData=state.scenario==="fixed";
+  $("#emptyOverlay").classList.toggle("show",!hasData);
+  $("#chartHint").textContent=hasData
+    ?"悬停查看完整指标 · 基线 = MindIE 1.0.RC3 · FP8 · 最高并发"
+    :"该场景数据待上线";
+  if(hasData) renderAll(); else { renderKPI(); }
+}));
+$$("#precSeg button").forEach(b=>b.addEventListener("click",()=>{
+  state.precision=b.dataset.v;
+  $$("#precSeg button").forEach(x=>x.classList.toggle("on",x===b));
+  renderAll();
+}));
+$("#chipSel").addEventListener("change",e=>{state.chip=e.target.value;renderAll()});
+$("#xSel").addEventListener("change",e=>{state.x=e.target.value;drawMain()});
+$("#ySel").addEventListener("change",e=>{state.y=e.target.value;drawMain()});
+$$("#viewToggle button").forEach(b=>b.addEventListener("click",()=>{
+  state.chartMode=b.dataset.v;
+  $$("#viewToggle button").forEach(x=>x.classList.toggle("on",x===b));
+  drawMain();
+}));
+$$("#sideTabs button").forEach(b=>b.addEventListener("click",()=>{
+  $$("#sideTabs button").forEach(x=>x.classList.toggle("on",x===b));
+  $$(".panel-side .cv-wrap").forEach(x=>x.classList.toggle("on",x.dataset.c===b.dataset.c));
+  $("#sideTitle").textContent=b.dataset.c==="trend"?"吞吐 · 并发扩展性":"框架吞吐对比";
+  if(b.dataset.c==="trend") drawTrend($("#trendChart")); else drawBars($("#sideBarChart"));
+}));
+$("#clOpen").addEventListener("click",()=>$("#clModal").classList.add("show"));
+$("#fullRankOpen").addEventListener("click",()=>$("#rankModal").classList.add("show"));
+$("#fullRankOpen2").addEventListener("click",()=>$("#rankModal").classList.add("show"));
+$$(".modal-close").forEach(b=>b.addEventListener("click",()=>$("#"+b.dataset.close).classList.remove("show")));
+$$(".modal-bg").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)m.classList.remove("show")}));
+document.addEventListener("keydown",e=>{if(e.key==="Escape")$$(".modal-bg").forEach(m=>m.classList.remove("show"))});
+
+/* 紧凑档面板页签 */
+$$("#ptabs button").forEach(b=>b.addEventListener("click",()=>{
+  $$("#ptabs button").forEach(x=>x.classList.toggle("on",x===b));
+  $$("#view-infer .panel").forEach(pn=>pn.classList.toggle("on",pn.dataset.p===b.dataset.p));
+  renderAll();
+}));
+
+/* 断点监听 */
+const mqCompact = matchMedia("(max-width:1099px)");
+const onBP = () => {
+  state.compact = mqCompact.matches;
+  renderAll();
+};
+mqCompact.addEventListener("change", onBP);
+
+/* 尺寸自适应重绘 */
+const ro = new ResizeObserver(()=>renderAll());
+[$("#chart"),$("#barChart"),$("#sideBarChart"),$("#trendChart")].forEach(cv=>ro.observe(cv));
+
+/* ================= 启动 ================= */
+state.compact = mqCompact.matches;
+renderModels(); renderFwChips(); renderLegend(); renderAll();
+</script>
+</body>
+</html>
