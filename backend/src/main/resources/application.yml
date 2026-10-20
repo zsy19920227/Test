@@ -1,0 +1,39 @@
+server:
+  port: 8080
+  servlet:
+    # 前端 axios 以 /api 为 baseURL，网关/Nginx 无需改写路径
+    context-path: /api
+
+spring:
+  application:
+    name: turing-platform
+  profiles:
+    active: dev
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*.xml
+  global-config:
+    banner: false
+    db-config:
+      # 逻辑删除统一约定：deleted 0=未删 1=已删
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      id-type: assign_id
+  configuration:
+    map-underscore-to-camel-case: true
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+turing:
+  jwt:
+    header: Authorization
+    prefix: "Bearer "
+    # HS256 要求密钥 >= 32 字节。生产环境必须通过环境变量 TURING_JWT_SECRET 覆盖！
+    secret: ${TURING_JWT_SECRET:dev-only-secret-0123456789abcdef-0123456789abcdef}
+    # token 有效期（秒），默认 24h
+    expire-seconds: 86400

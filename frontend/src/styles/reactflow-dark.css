@@ -1,0 +1,29 @@
+/* React Flow 深色工程风适配（配合平台 tokens） */
+.react-flow__node-default,
+.react-flow__node-input,
+.react-flow__node-output {
+  background: var(--surface-raised);
+  color: var(--text);
+  border: 1px solid var(--surface-border);
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.react-flow__edge-path {
+  stroke: #4a5361;
+}
+
+.react-flow__controls button {
+  background: var(--surface-raised);
+  color: var(--text);
+  border-bottom: 1px solid var(--surface-border);
+  fill: var(--text);
+}
+
+.react-flow__controls button:hover {
+  background: #262b33;
+}
+
+.react-flow__minimap {
+  background: var(--surface) !important;
+}

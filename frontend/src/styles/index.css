@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * 平台设计 tokens —— 与《图灵测试平台原型 v3》:root 保持一致。
+ * 新页面/新组件必须复用这些变量，不要另起第二套色板或字阶。
+ */
+:root {
+  --bg: #0c0e11;
+  --surface: #13161b;
+  --surface-raised: #1e232b;
+  --surface-border: #262b33;
+  --accent: #e5484d;
+
+  --text: #e8eaed;
+  --text-secondary: #b4bac3;
+  --text-muted: #9aa1ab;
+
+  /* 框架数据编码色：只用于数据（图表/图例/状态点），不用于 UI 装饰 */
+  --fw-cyan: #5f9ec7;
+  --fw-amber: #c2a45e;
+  --fw-green: #5f9e6f;
+  --fw-pink: #bd8494;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'HarmonyOS Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 工程数据看板：数字统一等宽、表格紧凑 */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-family: 'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
+}
+
+/* 细滚动条，贴合深色工程界面 */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #2b313a;
+  border-radius: 4px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* 尊重系统减弱动效设置（a11y：reduced-motion） */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
