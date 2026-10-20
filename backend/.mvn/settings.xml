@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 https://maven.apache.org/xsd/settings-1.2.0.xsd">
+  <!--
+    项目级 Maven 配置（华为内网镜像）。
+    由 .mvn/maven.config 自动加载，团队成员无需修改全局 settings.xml。
+    外网环境可将本文件中的 mirror 删除或改为 aliyun 等可达镜像。
+  -->
+  <mirrors>
+    <mirror>
+      <id>huaweicloud-central</id>
+      <mirrorOf>central</mirrorOf>
+      <name>Huawei Cloud Maven Central Mirror</name>
+      <url>https://repo.huaweicloud.com/repository/maven/</url>
+    </mirror>
+  </mirrors>
+</settings>

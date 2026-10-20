@@ -1,6 +1,11 @@
 # 统一换行符，避免 Windows/Linux 协作时的全文 diff
 * text=auto
 
+# Maven wrapper：LF 硬约束（CRLF 会破坏 .mvn/maven.config 与 mvnw 脚本）
+.mvn/maven.config text eol=lf
+.mvn/wrapper/maven-wrapper.properties text eol=lf
+mvnw text eol=lf
+
 # Windows 脚本保持 CRLF
 *.bat text eol=crlf
 *.cmd text eol=crlf
