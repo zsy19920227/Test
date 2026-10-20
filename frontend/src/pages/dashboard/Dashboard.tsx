@@ -193,7 +193,7 @@ export default function Dashboard() {
                 type="monotone"
                 dataKey="mindie"
                 name="MindIE 8.2.RC1"
-                stroke="var(--fw-cyan)"
+                stroke="var(--fw-blue)"
                 strokeWidth={2}
                 dot={{ r: 3 }}
               />

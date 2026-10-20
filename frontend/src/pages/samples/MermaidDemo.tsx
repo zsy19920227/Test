@@ -4,15 +4,15 @@ import mermaid from 'mermaid'
 
 mermaid.initialize({
   startOnLoad: false,
-  theme: 'dark',
+  theme: 'default',
   themeVariables: {
-    primaryColor: '#1e232b',
-    primaryTextColor: '#e8eaed',
-    primaryBorderColor: '#262b33',
-    lineColor: '#4a5361',
-    secondaryColor: '#13161b',
-    tertiaryColor: '#13161b',
-    background: '#0c0e11',
+    primaryColor: '#eff6ff',
+    primaryTextColor: '#1e293b',
+    primaryBorderColor: '#93c5fd',
+    lineColor: '#64748b',
+    secondaryColor: '#f1f5f9',
+    tertiaryColor: '#f8fafc',
+    background: '#ffffff',
     fontSize: '13px',
   },
 })

@@ -1,6 +1,6 @@
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Button, Form, Input } from 'antd'
-import { Lock, User } from 'lucide-react'
+import { Cpu, Lock, User } from 'lucide-react'
 import { login } from '@/store/authSlice'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 
@@ -30,17 +30,28 @@ export default function Login() {
   }
 
   return (
-    <div className="flex h-full items-center justify-center" style={{ background: 'var(--bg)' }}>
+    <div
+      className="flex h-full items-center justify-center"
+      style={{ background: 'linear-gradient(180deg, #eff6ff 0%, var(--bg) 100%)' }}
+    >
       <div
         className="w-[360px] p-8"
         style={{
           background: 'var(--surface)',
           border: '1px solid var(--surface-border)',
           borderRadius: 8,
+          boxShadow: '0 4px 16px rgba(15, 23, 42, 0.08)',
         }}
       >
         <div className="mb-6 flex items-center gap-2.5">
-          <span className="inline-block h-6 w-6 rounded" style={{ background: 'var(--accent)' }} />
+          <span
+            className="flex h-9 w-9 items-center justify-center rounded-lg"
+            style={{
+              background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)',
+            }}
+          >
+            <Cpu size={18} color="#ffffff" strokeWidth={2.2} />
+          </span>
           <div>
             <h1 className="text-lg font-semibold leading-tight">图灵测试平台</h1>
             <div className="text-xs" style={{ color: 'var(--text-muted)' }}>
@@ -86,7 +97,7 @@ export default function Login() {
         </Form>
 
         {error && (
-          <div className="mt-3 text-xs" style={{ color: 'var(--accent)' }}>
+          <div className="mt-3 text-xs" style={{ color: 'var(--danger)' }}>
             {error}
           </div>
         )}

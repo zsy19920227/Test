@@ -135,8 +135,8 @@ const precisions = [...new Set(records.map((r) => r.precision))]
 
 /** 框架色：只做数据编码，不做 UI 装饰 */
 const fwColor: Record<string, string> = {
-  'MindIE 8.2.RC1': 'var(--fw-cyan)',
-  'MindIE 8.0.0': 'var(--fw-pink)',
+  'MindIE 8.2.RC1': 'var(--fw-blue)',
+  'MindIE 8.0.0': 'var(--fw-violet)',
   'vLLM-Ascend 0.9': 'var(--fw-amber)',
   'SGLang-Ascend 0.4': 'var(--fw-green)',
 }

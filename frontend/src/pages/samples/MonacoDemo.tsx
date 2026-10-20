@@ -77,7 +77,7 @@ export default function MonacoDemo() {
           height="520px"
           language={current.language}
           value={code}
-          theme="vs-dark"
+          theme="vs"
           onChange={(v) => setCode(v ?? '')}
           options={{
             minimap: { enabled: true },

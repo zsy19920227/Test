@@ -13,8 +13,8 @@ import '@/styles/index.css'
 dayjs.locale('zh-cn')
 
 /**
- * 全局主题：深色工程看板风格（对齐平台原型 v3 tokens）。
- * 红色仅作为品牌主色，不做大面积装饰。
+ * 全局主题：浅色 Data-Dense Dashboard（ui-ux-pro-max 设计系统）。
+ * 深蓝主色 + 琥珀强调，白卡片浮于浅灰底。
  */
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -22,16 +22,16 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <ConfigProvider
         locale={zhCN}
         theme={{
-          algorithm: theme.darkAlgorithm,
+          algorithm: theme.defaultAlgorithm,
           token: {
-            colorPrimary: '#e5484d',
-            colorBgBase: '#0c0e11',
-            colorBgContainer: '#13161b',
-            colorBgElevated: '#1e232b',
-            colorBorder: '#262b33',
-            colorBorderSecondary: '#22262e',
-            borderRadius: 4,
-            fontSize: 13,
+            colorPrimary: '#1e40af',
+            colorBgBase: '#f8fafc',
+            colorBgContainer: '#ffffff',
+            colorBgElevated: '#ffffff',
+            colorBorder: '#cbd5e1',
+            colorBorderSecondary: '#e2e8f0',
+            borderRadius: 6,
+            fontSize: 14,
             fontFamily: "'HarmonyOS Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif",
           },
         }}

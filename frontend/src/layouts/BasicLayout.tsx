@@ -4,11 +4,14 @@ import { Dropdown, Layout, Menu } from 'antd'
 import type { MenuProps } from 'antd'
 import {
   Activity,
+  Cpu,
   FileCode2,
   Gauge,
+  LayoutGrid,
   LogOut,
   Network,
   PanelLeft,
+  Settings,
   UserCircle2,
   Users,
   Workflow,
@@ -28,6 +31,7 @@ const menuItems: MenuProps['items'] = [
   },
   {
     key: 'samples',
+    icon: <LayoutGrid size={16} />,
     label: '组件示例',
     children: [
       {
@@ -45,6 +49,7 @@ const menuItems: MenuProps['items'] = [
   },
   {
     key: 'system',
+    icon: <Settings size={16} />,
     label: '系统管理',
     children: [{ key: '/system/users', icon: <Users size={16} />, label: '用户管理' }],
   },
@@ -102,14 +107,19 @@ export default function BasicLayout() {
           lineHeight: '52px',
           background: 'var(--surface)',
           borderBottom: '1px solid var(--surface-border)',
+          boxShadow: '0 1px 2px rgba(15, 23, 42, 0.04)',
         }}
       >
-        {/* 品牌区：红色仅用于 logo 标记 */}
-        <div className="flex select-none items-center gap-2">
+        {/* 品牌区：渐变图标容器 + 文字（标准产品标识处理） */}
+        <div className="flex select-none items-center gap-2.5">
           <span
-            className="inline-block h-4 w-4 rounded-[3px]"
-            style={{ background: 'var(--accent)' }}
-          />
+            className="flex h-7 w-7 items-center justify-center rounded-lg"
+            style={{
+              background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)',
+            }}
+          >
+            <Cpu size={16} color="#ffffff" strokeWidth={2.2} />
+          </span>
           <span className="text-[15px] font-semibold tracking-wide">图灵测试平台</span>
         </div>
         <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
@@ -137,12 +147,12 @@ export default function BasicLayout() {
         <Sider
           width={200}
           collapsed={sidebarCollapsed}
-          theme="dark"
+          theme="light"
           style={{ borderRight: '1px solid var(--surface-border)' }}
         >
           <div className="flex h-full flex-col">
             <Menu
-              theme="dark"
+              theme="light"
               mode="inline"
               items={menuItems}
               selectedKeys={[location.pathname]}

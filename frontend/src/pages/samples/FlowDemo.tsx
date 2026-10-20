@@ -2,7 +2,7 @@ import { Card } from 'antd'
 import { Background, BackgroundVariant, Controls, MiniMap, ReactFlow } from 'reactflow'
 import type { Edge, Node } from 'reactflow'
 import 'reactflow/dist/style.css'
-import '@/styles/reactflow-dark.css'
+import '@/styles/reactflow.css'
 
 /** 测试任务执行链路（固定示例拓扑） */
 const nodes: Node[] = [
@@ -34,13 +34,13 @@ export default function FlowDemo() {
           }}
         >
           <ReactFlow nodes={nodes} edges={edges} fitView>
-            <Background variant={BackgroundVariant.Dots} gap={16} color="#2b313a" />
+            <Background variant={BackgroundVariant.Dots} gap={16} color="#cbd5e1" />
             <Controls showInteractive={false} />
             <MiniMap
               pannable
               zoomable
-              nodeColor={() => '#3a424d'}
-              maskColor="rgba(12, 14, 17, 0.7)"
+              nodeColor={() => '#cbd5e1'}
+              maskColor="rgba(248, 250, 252, 0.7)"
             />
           </ReactFlow>
         </div>

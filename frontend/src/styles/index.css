@@ -3,25 +3,34 @@
 @tailwind utilities;
 
 /*
- * 平台设计 tokens —— 与《图灵测试平台原型 v3》:root 保持一致。
- * 新页面/新组件必须复用这些变量，不要另起第二套色板或字阶。
+ * 平台设计 tokens v4 —— 浅色 · Data-Dense Dashboard
+ * 由 ui-ux-pro-max design-system 引擎生成（blue data + amber highlights），
+ * 字体按内网约束保留本地中文栈（未采纳 Fira 远程字体）。
+ * 新页面/新组件必须复用这些变量，不要另起第二套色板。
  */
 :root {
-  --bg: #0c0e11;
-  --surface: #13161b;
-  --surface-raised: #1e232b;
-  --surface-border: #262b33;
-  --accent: #e5484d;
+  /* 品牌 */
+  --primary: #1e40af; /* 深蓝：品牌 / 主操作 */
+  --accent: #d97706; /* 琥珀：强调 / 高亮 */
+  --danger: #dc2626; /* 危险 / 错误 */
 
-  --text: #e8eaed;
-  --text-secondary: #b4bac3;
-  --text-muted: #9aa1ab;
+  /* 表面 */
+  --bg: #f8fafc; /* 页面底 */
+  --surface: #ffffff; /* 卡片 */
+  --surface-raised: #ffffff; /* 浮层 */
+  --surface-border: #e2e8f0; /* 边框 */
+  --muted: #f1f5f9; /* 弱化底 */
 
-  /* 框架数据编码色：只用于数据（图表/图例/状态点），不用于 UI 装饰 */
-  --fw-cyan: #5f9ec7;
-  --fw-amber: #c2a45e;
-  --fw-green: #5f9e6f;
-  --fw-pink: #bd8494;
+  /* 文本（白底对比度 13.5 / 7.5 / 4.8 : 1） */
+  --text: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+
+  /* 框架数据编码色：只用于图表/图例/状态点，不做 UI 装饰 */
+  --fw-blue: #2563eb;
+  --fw-amber: #d97706;
+  --fw-green: #059669;
+  --fw-violet: #7c3aed;
 }
 
 html,
@@ -30,28 +39,44 @@ body,
   height: 100%;
 }
 
+/* antd <App> 渲染的包裹层：接回百分比高度链，否则 h-full 失效、页面被内容撑高 */
+.ant-app {
+  height: 100%;
+}
+
 body {
   margin: 0;
   background-color: var(--bg);
   color: var(--text);
-  font-family: 'HarmonyOS Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-family:
+    'HarmonyOS Sans SC',
+    'PingFang SC',
+    'Microsoft YaHei',
+    sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
 /* 工程数据看板：数字统一等宽、表格紧凑 */
 .tabular {
   font-variant-numeric: tabular-nums;
-  font-family: 'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
+  font-family:
+    'JetBrains Mono',
+    'Cascadia Code',
+    Consolas,
+    monospace;
 }
 
-/* 细滚动条，贴合深色工程界面 */
+/* 细滚动条 */
 *::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 *::-webkit-scrollbar-thumb {
-  background: #2b313a;
+  background: #cbd5e1;
   border-radius: 4px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 *::-webkit-scrollbar-track {
   background: transparent;
