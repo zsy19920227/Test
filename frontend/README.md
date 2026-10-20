@@ -4,7 +4,7 @@
 
 ```bash
 npm install     # 安装依赖（.npmrc 已指向华为云 npm 镜像）
-npm run dev     # 开发服务器 http://localhost:5173（/api 代理到 8080）
+npm run dev     # 开发服务器 http://localhost:5173（/api 代理到 8081）
 npm run build   # 类型检查 + 生产构建（输出 dist/）
 npm run preview # 本地预览构建产物
 npm run typecheck

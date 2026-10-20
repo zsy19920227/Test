@@ -1,5 +1,6 @@
 server:
-  port: 8080
+  # 8080 常被本机 pythonw（Flask）占用，本项目固定用 8081
+  port: 8081
   servlet:
     # 前端 axios 以 /api 为 baseURL，网关/Nginx 无需改写路径
     context-path: /api

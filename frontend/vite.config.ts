@@ -14,9 +14,9 @@ export default defineConfig({
     port: 5173,
     open: false,
     proxy: {
-      // 开发环境将 /api 代理到本地后端（Spring Boot 8080）
+      // 开发环境将 /api 代理到本地后端（Spring Boot 8081）
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:8081',
         changeOrigin: true,
       },
     },
@@ -26,7 +26,7 @@ export default defineConfig({
     proxy: {
       // 与 dev 一致：预览构建产物时同样将 /api 代理到后端
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:8081',
         changeOrigin: true,
       },
     },

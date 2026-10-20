@@ -80,7 +80,7 @@ mysql -uroot -p < backend/sql/init.sql
 docker compose up -d
 ```
 
-### 2. 启动后端（默认 8080）
+### 2. 启动后端（默认 8081）
 
 ```bash
 cd backend
@@ -90,7 +90,7 @@ mvn spring-boot:run
 > 数据库连接、Redis 地址、JWT 密钥见 `src/main/resources/application-dev.yml`。
 > 生产环境用 `application-prod.yml` 并通过环境变量覆盖（TURING_JWT_SECRET 等）。
 
-### 3. 启动前端（默认 5173，已配置 /api 代理到 8080）
+### 3. 启动前端（默认 5173，已配置 /api 代理到 8081）
 
 ```bash
 cd frontend
@@ -103,7 +103,7 @@ npm run dev
 | 入口 | 地址 |
 |---|---|
 | 前端 | http://localhost:5173 |
-| API 文档 | http://localhost:8080/api/swagger-ui.html |
+| API 文档 | http://localhost:8081/api/swagger-ui.html |
 
 演示账号（init.sql 种子数据）：
 
@@ -123,4 +123,4 @@ cd backend && mvn package -DskipTests
 java -jar target/turing-platform.jar --spring.profiles.active=prod
 ```
 
-前端产物建议由 Nginx 托管，并将 `/api` 反向代理到后端 8080（与开发代理同构）。
+前端产物建议由 Nginx 托管，并将 `/api` 反向代理到后端 8081（与开发代理同构）。

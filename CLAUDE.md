@@ -24,7 +24,7 @@ cd frontend
 npm install        # 源已锁华为云镜像（.npmrc），勿改回官方源
 npm run lint       # ESLint 9 flat config，必须 0 error
 npm run build      # tsc + vite，必须成功
-npm run dev        # 5173，/api 代理到 8080
+npm run dev        # 5173，/api 代理到 8081
 npm run preview    # 4173，验证生产构建
 ```
 

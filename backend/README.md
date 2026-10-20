@@ -3,7 +3,7 @@
 ## 命令
 
 ```bash
-mvn spring-boot:run                # 开发运行（默认 dev profile，端口 8080，context-path=/api）
+mvn spring-boot:run                # 开发运行（默认 dev profile，端口 8081，context-path=/api）
 mvn package -DskipTests            # 打包 → target/turing-platform.jar
 mvn test                           # 运行测试（需本地 MySQL/Redis 可用）
 ```
