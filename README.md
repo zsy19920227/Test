@@ -132,5 +132,6 @@ java -jar target/turing-platform.jar --spring.profiles.active=prod
 团队成员使用 AI 编码代理（Claude Code、Codex CLI、Cursor、GitHub Copilot、Hermes 等）时，规则统一收敛在根目录 **[AGENTS.md](AGENTS.md)**：
 
 - 标准命令、质量门槛（lint 0 error / BUILD SUCCESS / UI 浏览器冒烟）、架构铁律与代理行为规范，对所有代理一视同仁；
+- **开发流程统一走 superpowers 阶段门**（brainstorming → writing-plans → executing-plans、systematic-debugging、TDD、verification-before-completion、requesting-code-review）；superpowers 7.0.0 技能已随仓库内置（`.claude/skills/`），Claude Code 用户开箱即用，其他工具按同等纪律执行；
 - 各工具入口文件（`CLAUDE.md`、`.cursor/rules/`、`.github/copilot-instructions.md`）均为 AGENTS.md 的薄引用，冲突时以 AGENTS.md 为准；
 - 个人本机差异（JDK 路径等）写入各自 gitignored 的 `CLAUDE.local.md`，不进仓库。

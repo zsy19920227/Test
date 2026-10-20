@@ -6,6 +6,10 @@
 .mvn/wrapper/maven-wrapper.properties text eol=lf
 mvnw text eol=lf
 
+# superpowers 技能脚本：LF 硬约束（bash/node 脚本遇 CRLF 会失效）
+*.sh text eol=lf
+.claude/skills/**/scripts/* text eol=lf
+
 # Windows 脚本保持 CRLF
 *.bat text eol=crlf
 *.cmd text eol=crlf

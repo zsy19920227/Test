@@ -4,18 +4,19 @@
 
 ## Claude Code 专属工作流
 
-若本机已安装 superpowers / ui-ux-pro-max 技能集，则以下工作流**强制**；未安装时，按 AGENTS.md「代理行为规范」执行同等纪律（计划先行、根因修复、证据先于断言）。
+**所有开发任务强制走 superpowers 流程**（阶段门与产出物见 AGENTS.md「开发流程」）。superpowers 7.0.0 的 15 个流程技能已随仓库内置（`.claude/skills/`），打开仓库即可用，无需安装插件；本机装有 superpowers 插件的用插件版（`superpowers:*`），二者流程一致。
 
 - 技能先行：任务开始前检查是否有适用技能（1% 可能也必须调用；先流程技能，后实现技能）。
-- 「构建 X」→ 先 `superpowers:brainstorming`，再 `superpowers:writing-plans` 产出计划，按 `superpowers:executing-plans` 执行。
-- 「修 bug」→ 先 `superpowers:systematic-debugging`，理解根因后才动手。
-- 任何 UI 结构/视觉/交互/图表改动 → 先查 ui-ux-pro-max 规则：
+- 「构建 X」→ 先 `brainstorming`，再 `writing-plans` 产出计划文档，按 `executing-plans` 执行。
+- 「修 bug」→ 先 `systematic-debugging`，理解根因后才动手。
+- 有测试价值的业务逻辑 → `test-driven-development`，先写失败测试再实现。
+- 任何 UI 结构/视觉/交互/图表改动 → 先查 ui-ux-pro-max 规则（本机已安装时）：
   ```bash
   python "$HOME/.claude/skills/ui-ux-pro-max/scripts/search.py" "<语义结果>" --domain ux
   ```
-  Windows 用 `python`（非 python3）。先查语义结果（如 "icon button accessible label"），需要实现细节再查具体栈（`--stack react`）。
-- 声称「完成/通过/修好」之前 → 执行 verification-before-completion：跑出 AGENTS.md 质量门槛的新鲜输出（完整命令 + 退出码 + 结果计数），证据先于断言，禁止「应该可以了」。
-- 提交/PR 之前 → `superpowers:requesting-code-review`。
+  Windows 用 `python`（非 python3）。先查语义结果（如 "icon button accessible label"），需要实现细节再查具体栈（`--stack react`）。未安装 ui-ux-pro-max 时，按 CONTRIBUTING.md「UI/UX 最低要求」清单逐项执行。
+- 声称「完成/通过/修好」之前 → 执行 `verification-before-completion`：跑出 AGENTS.md 质量门槛的新鲜输出（完整命令 + 退出码 + 结果计数），证据先于断言，禁止「应该可以了」。
+- 提交/PR 之前 → `requesting-code-review`。
 
 ## 构建命令速查
 

@@ -17,19 +17,23 @@ AI 代理（Claude Code、Codex CLI、Cursor、GitHub Copilot、Hermes 等）在
 - 小步提交，每次提交都必须保持可构建（前端 `npm run build` / 后端 `./mvnw.cmd package -DskipTests` 通过）
 - 合并前必须通过代码评审与全量验证（见下）
 
-## 开发工作流（通用纪律，superpowers 技能集是其一种实现）
+## 开发工作流（superpowers 流程，强制）
 
-1. **先想清楚再动手**：新功能先澄清需求与方案（brainstorm → 计划文档），拆成可验证的小任务
-2. **TDD**：能写测试的逻辑先写失败测试，再实现至通过（后端参考 `JwtTokenProviderTest` 模式——不依赖数据库的纯单元测试优先）
-3. **完成前验证（铁律）**：声称完成前必须新鲜跑出以下证据，任何一步不绿都不算完成：
+所有开发任务按 superpowers 流程推进（阶段门与产出物详见 [AGENTS.md](AGENTS.md)「开发流程」；技能已随仓库内置 `.claude/skills/`，Claude Code 用户开箱即用，其他工具按同等纪律执行）：
+
+1. **先想清楚再动手（brainstorming → writing-plans）**：新功能先澄清需求与方案，再写计划文档（任务分解 + 每项验证标准），拆成可验证的小任务后按计划执行（executing-plans）
+2. **TDD（test-driven-development）**：能写测试的逻辑先写失败测试，再实现至通过（后端参考 `JwtTokenProviderTest` 模式——不依赖数据库的纯单元测试优先）
+3. **根因修复（systematic-debugging）**：修 bug 按"理解 → 假设 → 验证 → 修复"推进，禁止表面补丁
+4. **完成前验证（verification-before-completion，铁律）**：声称完成前必须新鲜跑出以下证据，任何一步不绿都不算完成：
    - 前端：`npm run lint`（0 error）+ `npm run build`（成功）
    - 后端：`./mvnw.cmd package -DskipTests`（BUILD SUCCESS）+ 涉及认证/工具类时 `./mvnw.cmd test -Dtest=JwtTokenProviderTest`（Linux/macOS 用 `./mvnw`）
    - UI 改动：`npm run preview` 后浏览器逐页冒烟（页面渲染、图表、表格、无控制台错误）
-4. **评审**：提交 PR 前自查 + 交叉评审，通过后才合并
+5. **评审（requesting-code-review）**：提交 PR 前自查 + 交叉评审，通过后才合并
 
 ## 与 AI 代理协作
 
 - **AGENTS.md 是唯一规则源**：所有代理工具读同一份规则；改规则先改 AGENTS.md 并经团队评审，其他入口文件（`CLAUDE.md`、`.cursor/rules/`、`.github/copilot-instructions.md`）只是薄引用。
+- **开发流程统一走 superpowers 阶段门**（AGENTS.md「开发流程」）：superpowers 7.0.0 技能已随仓库内置（`.claude/skills/`），成员无需自行安装；升级时替换该目录并在提交信息注明版本。
 - **代理产出与人工产出同一标准**：质量门槛全绿才能提交，Conventional Commits，评审后才合并；禁止把"代理说通过了"当作验证。
 - **本机个性化不进仓库**：个人路径/偏好写入各自 gitignored 的本地文件（如 `CLAUDE.local.md`）。
 - **代理参与的提交请注明**：提交信息尾部加 `（AI 辅助）`，便于评审聚焦。

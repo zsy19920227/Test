@@ -48,6 +48,22 @@
 - 数据库：仓库根目录 `docker compose up -d`（MySQL 8 + Redis 7，首次启动自动执行 `init.sql`）。
 - 已知坑：git-bash 下的 curl 发中文请求体会按 GBK 编码导致后端报 Invalid UTF-8 —— 联调测试请求体用 ASCII，或经浏览器/前端发送。
 
+## 开发流程（superpowers 流程 —— 所有开发任务的强制阶段门）
+
+本仓库**所有非平凡开发任务**（新功能、跨模块改动、bug 修复）一律走 superpowers 流程。仓库已内置 superpowers 7.0.0 全部 15 个流程技能（`.claude/skills/`，MIT，来源 obra/superpowers）：Claude Code 用户打开仓库即自动可用，无需安装插件；本机装有 superpowers 插件的用插件版（`superpowers:*`），流程一致。
+
+**每阶段有明确产出物，禁止跳阶直写代码：**
+
+| 任务类型 | 强制阶段序列 | 关键产出物 |
+|---|---|---|
+| 新功能 / 「构建 X」 | `brainstorming` → `writing-plans` → `executing-plans` | 需求澄清结论 → 计划文档（任务分解 + 每项验证标准）→ 按计划小步提交 |
+| 修 bug | `systematic-debugging`（理解 → 假设 → 验证 → 修复，先根因后动手） | 带证据的根因结论 → 最小修复 |
+| 有测试价值的业务逻辑 | `test-driven-development` | 先失败的测试 → 实现至通过 |
+| 收尾（所有任务一律） | `verification-before-completion` → `requesting-code-review` | 质量门槛全绿证据 → 评审通过后才提交/PR |
+
+- 计划文档建议放 `docs/plans/<日期>-<主题>.md`；无论是否入库，必须**先写后做**。
+- 非 Claude Code 工具（Codex CLI / Cursor / Copilot / Hermes 等）没有技能装载机制，但**阶段门不变**：把上表当作 checklist 逐项执行同等纪律 —— 先澄清方案、再书面计划、按计划执行、根因修复、完成前证据、提交前评审。
+
 ## 质量门槛（声称"完成/通过/修好"之前必须全绿）
 
 **证据先于断言**：必须给出新鲜的命令输出（完整命令 + 退出码 + 结果计数），禁止"应该可以了"。
@@ -73,8 +89,8 @@
 ## 代理行为规范
 
 1. **规则先行**：任何任务开始前先通读本文件；涉及 UI/UX 的改动遵循 CONTRIBUTING.md 的最低要求清单。
-2. **计划先行**：非平凡任务（新功能、跨模块改动）先产出简短计划再动手；有可用流程技能时优先用技能。
-3. **根因修复**：修 bug 先定位根因（日志、最小复现），禁止表面补丁；禁止为过测试而改测试预期。
+2. **流程强制**：非平凡任务一律走「开发流程」章节的 superpowers 阶段门，禁止跳阶直写代码。
+3. **根因修复**：修 bug 按 `systematic-debugging` 纪律先定位根因（日志、最小复现），禁止表面补丁；禁止为过测试而改测试预期。
 4. **最小改动**：不顺手重构无关代码；不引入新依赖，除非任务明确要求且经确认。
 5. **锁定项勿动**：`frontend/.npmrc`（华为云源）、`backend/.mvn/*`（wrapper 与镜像）、8081 端口、设计 tokens 结构。
 6. **敏感信息禁止入库**：JWT 密钥、数据库密码等生产配置走环境变量（`application-prod.yml` 的 `TURING_*` 占位）。
