@@ -43,7 +43,7 @@ turing-test-platform/
 │       ├── pages/             # 页面（登录/工作台/推理性能/组件示例/用户管理）
 │       ├── router/            # 路由（重型页面懒加载）
 │       ├── store/             # Redux Toolkit + Zustand
-│       └── styles/            # 全局样式 + 设计 tokens（深色工程风）
+│       └── styles/            # 全局样式 + 设计 tokens（浅色 Data-Dashboard v4）
 ├── backend/                   # 后端工程（Maven）
 │   └── src/main/
 │       ├── java/com/turing/platform/
@@ -63,10 +63,9 @@ turing-test-platform/
 
 ### 0. 环境要求
 
-- Node.js ≥ 18（本机 D:\软件\NodeJS）
-- JDK 21（本机 D:\软件\jdk-21.0.2，JAVA_HOME 已配置）
-- Maven 3.9（本机 D:\软件\apache-maven-3.9.16，MAVEN_HOME 已配置，镜像走华为云）
-- MySQL 8.0+ 与 Redis（本地安装，或用仓库根目录 `docker compose up -d`）
+- Node.js ≥ 18（npm 镜像已锁华为云：`frontend/.npmrc`）
+- JDK 21，且 `JAVA_HOME` 指向它（Maven **无需安装**：仓库自带 wrapper 与华为云镜像配置）
+- MySQL 8.0+ 与 Redis 7（推荐仓库根目录 `docker compose up -d` 一键起，也可本地自装）
 
 ### 1. 初始化数据库
 
@@ -80,11 +79,13 @@ mysql -uroot -p < backend/sql/init.sql
 docker compose up -d
 ```
 
-### 2. 启动后端（默认 8081）
+### 2. 启动后端（默认 8081，在 backend/ 目录下）
 
 ```bash
-cd backend
-mvn spring-boot:run
+# Windows（git-bash / cmd）
+./mvnw.cmd spring-boot:run
+# Linux / macOS
+./mvnw spring-boot:run
 ```
 
 > 数据库连接、Redis 地址、JWT 密钥见 `src/main/resources/application-dev.yml`。
@@ -118,9 +119,18 @@ npm run dev
 # 前端：输出 frontend/dist
 cd frontend && npm run build
 
-# 后端：输出 backend/target/turing-platform.jar
-cd backend && mvn package -DskipTests
+# 后端：输出 backend/target/turing-platform.jar（在 backend/ 目录下）
+./mvnw.cmd -B -ntp package -DskipTests     # Windows
+./mvnw -B -ntp package -DskipTests         # Linux / macOS
 java -jar target/turing-platform.jar --spring.profiles.active=prod
 ```
 
 前端产物建议由 Nginx 托管，并将 `/api` 反向代理到后端 8081（与开发代理同构）。
+
+## AI 代理协作
+
+团队成员使用 AI 编码代理（Claude Code、Codex CLI、Cursor、GitHub Copilot、Hermes 等）时，规则统一收敛在根目录 **[AGENTS.md](AGENTS.md)**：
+
+- 标准命令、质量门槛（lint 0 error / BUILD SUCCESS / UI 浏览器冒烟）、架构铁律与代理行为规范，对所有代理一视同仁；
+- 各工具入口文件（`CLAUDE.md`、`.cursor/rules/`、`.github/copilot-instructions.md`）均为 AGENTS.md 的薄引用，冲突时以 AGENTS.md 为准；
+- 个人本机差异（JDK 路径等）写入各自 gitignored 的 `CLAUDE.local.md`，不进仓库。

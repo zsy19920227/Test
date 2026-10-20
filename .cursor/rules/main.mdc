@@ -1,0 +1,12 @@
+---
+description: 图灵测试平台 —— 全局项目规则入口
+alwaysApply: true
+---
+
+所有项目规则统一收敛在仓库根目录 **AGENTS.md**（标准命令、质量门槛、架构铁律、代理行为规范）。**开始任何任务前先读它**；本文件与其冲突时以 AGENTS.md 为准。
+
+最关键的三条（详见 AGENTS.md）：
+
+1. 命令：前端在 `frontend/` 下 `npm run lint`（0 error）/ `npm run build`；后端在 `backend/` 下用 `./mvnw.cmd`（Windows git-bash）或 `./mvnw`（Linux/macOS），`JAVA_HOME` 需指向 JDK 21。
+2. UI 为**浅色** Data-Dashboard 主题 v4：设计 tokens 唯一来源是 `frontend/src/styles/index.css` 的 `:root`，禁止深色样式或第二套色板。
+3. 声称"完成"前必须给出新鲜验证输出（完整命令 + 退出码 + 结果计数），质量门槛全绿才算完成；小步提交，Conventional Commits。

@@ -1,11 +1,12 @@
 # 贡献指南（CONTRIBUTING）
 
-本项目的前后端规范由两套技能标准约束：**superpowers**（开发流程纪律）与 **ui-ux-pro-max**（UI/UX 质量规则）。AI 代理的执行细节见 [CLAUDE.md](CLAUDE.md)。
+AI 代理（Claude Code、Codex CLI、Cursor、GitHub Copilot、Hermes 等）在本仓库工作的规则统一见 **[AGENTS.md](AGENTS.md)**（标准命令、质量门槛、架构铁律、代理行为规范）；Claude Code 专属工作流见 [CLAUDE.md](CLAUDE.md)。superpowers / ui-ux-pro-max 技能集是这些纪律的一种可选实现，未安装时按 AGENTS.md 执行同等纪律。
 
 ## 环境要求
 
-- Node ≥ 18、JDK 21、Maven 3.9+、MySQL 8.0+、Redis 7
-- 内网镜像已配置：前端 npm 走华为云（`frontend/.npmrc`），Maven 走华为云（全局 `settings.xml`）
+- Node ≥ 18、JDK 21（`JAVA_HOME` 指向 JDK 21）、MySQL 8.0+、Redis 7
+- Maven **无需安装**：仓库自带 wrapper（`backend/mvnw` / `backend/mvnw.cmd`），华为云镜像内置于 `backend/.mvn/settings.xml` 自动生效，无需改全局 `~/.m2/settings.xml`
+- 前端 npm 镜像已锁华为云（`frontend/.npmrc`）
 - 本地联调：`docker compose up -d`（自动执行 `backend/sql/init.sql` 建库）
 
 ## 分支与提交
@@ -13,18 +14,25 @@
 - `main` 为主干；功能分支 `feature/<名称>`，修复分支 `fix/<issue>`
 - 提交信息遵循 **Conventional Commits**：
   `feat(auth): 支持登出黑名单`、`fix(ui): 修复排行榜排序`、`docs: ...`、`refactor: ...`、`test: ...`、`chore: ...`
-- 小步提交，每次提交都必须保持可构建（`npm run build` / `mvn package` 通过）
+- 小步提交，每次提交都必须保持可构建（前端 `npm run build` / 后端 `./mvnw.cmd package -DskipTests` 通过）
 - 合并前必须通过代码评审与全量验证（见下）
 
-## 开发工作流（superpowers 纪律）
+## 开发工作流（通用纪律，superpowers 技能集是其一种实现）
 
 1. **先想清楚再动手**：新功能先澄清需求与方案（brainstorm → 计划文档），拆成可验证的小任务
 2. **TDD**：能写测试的逻辑先写失败测试，再实现至通过（后端参考 `JwtTokenProviderTest` 模式——不依赖数据库的纯单元测试优先）
 3. **完成前验证（铁律）**：声称完成前必须新鲜跑出以下证据，任何一步不绿都不算完成：
    - 前端：`npm run lint`（0 error）+ `npm run build`（成功）
-   - 后端：`mvn package -DskipTests`（BUILD SUCCESS）+ 涉及认证/工具类时 `mvn test`
+   - 后端：`./mvnw.cmd package -DskipTests`（BUILD SUCCESS）+ 涉及认证/工具类时 `./mvnw.cmd test -Dtest=JwtTokenProviderTest`（Linux/macOS 用 `./mvnw`）
    - UI 改动：`npm run preview` 后浏览器逐页冒烟（页面渲染、图表、表格、无控制台错误）
 4. **评审**：提交 PR 前自查 + 交叉评审，通过后才合并
+
+## 与 AI 代理协作
+
+- **AGENTS.md 是唯一规则源**：所有代理工具读同一份规则；改规则先改 AGENTS.md 并经团队评审，其他入口文件（`CLAUDE.md`、`.cursor/rules/`、`.github/copilot-instructions.md`）只是薄引用。
+- **代理产出与人工产出同一标准**：质量门槛全绿才能提交，Conventional Commits，评审后才合并；禁止把"代理说通过了"当作验证。
+- **本机个性化不进仓库**：个人路径/偏好写入各自 gitignored 的本地文件（如 `CLAUDE.local.md`）。
+- **代理参与的提交请注明**：提交信息尾部加 `（AI 辅助）`，便于评审聚焦。
 
 ## 前端规范（frontend/）
 

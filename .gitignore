@@ -17,3 +17,8 @@ logs/
 .env.local
 .DS_Store
 Thumbs.db
+
+# AI 代理本地配置（个人本机差异，勿提交）
+CLAUDE.local.md
+.claude/settings.local.json
+.agents.local.md
