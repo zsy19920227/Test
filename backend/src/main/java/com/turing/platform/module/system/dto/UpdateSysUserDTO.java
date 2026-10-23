@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class UpdateSysUserDTO {
 
@@ -23,4 +25,7 @@ public class UpdateSysUserDTO {
     @Min(value = 0, message = "状态取值 0/1")
     @Max(value = 1, message = "状态取值 0/1")
     private Integer status;
+
+    /** 重新分配的角色 ID 列表；null 表示不调整角色 */
+    private List<Long> roleIds;
 }

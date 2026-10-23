@@ -24,4 +24,7 @@ public class SysUserRow {
 
     /** GROUP_CONCAT 聚合的角色编码串，如 "admin,viewer" */
     private String roleCodes;
+
+    /** GROUP_CONCAT 聚合的角色 ID 串，如 "1,2" */
+    private String roleIds;
 }

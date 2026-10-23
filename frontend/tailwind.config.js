@@ -16,6 +16,15 @@ export default {
           border: '#e2e8f0',
         },
         muted: '#f1f5f9',
+        // 文本/边框映射（与 :root --text* / --surface-border 一致，替代高频 inline style）
+        text: {
+          DEFAULT: '#1e293b',
+          secondary: '#475569',
+          muted: '#64748b',
+        },
+        border: {
+          subtle: '#e2e8f0',
+        },
         // 框架数据编码色（只做数据编码，不做 UI 装饰）
         fw: {
           blue: '#2563eb',

@@ -12,6 +12,7 @@ import {
   YAxis,
 } from 'recharts'
 import { ArrowUp } from 'lucide-react'
+import { PageHeader } from '@/components/PageHeader'
 
 /*
  * 推理性能页（脚手架演示版）：基准配置筛选 → 折线主图 → 可排序排行榜。
@@ -186,7 +187,7 @@ const columns: TableColumnsType<InferenceRecord> = [
     render: (v: number, row: InferenceRecord) => (
       <span className="flex items-center justify-end gap-1">
         {v}
-        {row.ttft <= 450 ? <ArrowUp size={11} style={{ color: 'var(--fw-green)' }} /> : null}
+        {row.ttft <= 450 ? <ArrowUp size={11} className="text-fw-green" /> : null}
       </span>
     ),
   },
@@ -234,13 +235,11 @@ export default function InferencePage() {
 
   return (
     <div className="flex flex-col gap-5">
-      <h1 className="sr-only">推理性能</h1>
+      <PageHeader title="推理性能" description="基准测试结果筛选、对比与排序" />
       <Card size="small" title="基准测试配置">
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">
-            <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
-              模型
-            </span>
+            <span className="text-xs text-text-muted">模型</span>
             <Select
               allowClear
               placeholder="全部"
@@ -251,9 +250,7 @@ export default function InferencePage() {
             />
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
-              精度
-            </span>
+            <span className="text-xs text-text-muted">精度</span>
             <Select
               allowClear
               placeholder="全部"
@@ -263,7 +260,7 @@ export default function InferencePage() {
               options={precisions.map((p) => ({ value: p, label: p }))}
             />
           </div>
-          <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
+          <span className="text-xs text-text-muted">
             芯片配置：Atlas 800I A2 ×8（910B4, 64GB）
           </span>
         </div>
@@ -327,7 +324,7 @@ export default function InferencePage() {
         />
       </Card>
 
-      <div className="text-xs" style={{ color: 'var(--text-muted)' }}>
+      <div className="text-xs text-text-muted">
         示例数据仅用于界面演示 · 每个数据点对应一次可复现测试任务（run #, 环境快照 CANN/固件/驱动）
       </div>
     </div>

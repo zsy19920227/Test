@@ -3,6 +3,7 @@ import { Button, Form, Input } from 'antd'
 import { Cpu, Lock, User } from 'lucide-react'
 import { login } from '@/store/authSlice'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { tokens } from '@/styles/tokens'
 
 interface LoginFormValues {
   username: string
@@ -32,31 +33,29 @@ export default function Login() {
   return (
     <div
       className="flex h-full items-center justify-center"
-      style={{ background: 'linear-gradient(180deg, #eff6ff 0%, var(--bg) 100%)' }}
+      style={{ background: 'var(--page-grad)' }}
     >
       <div
         className="w-[360px] p-8"
         style={{
           background: 'var(--surface)',
           border: '1px solid var(--surface-border)',
-          borderRadius: 8,
-          boxShadow: '0 4px 16px rgba(15, 23, 42, 0.08)',
+          borderRadius: 'var(--radius-lg)',
+          boxShadow: 'var(--shadow-card)',
         }}
       >
         <div className="mb-6 flex items-center gap-2.5">
           <span
             className="flex h-9 w-9 items-center justify-center rounded-lg"
             style={{
-              background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)',
+              background: 'var(--brand-grad)',
             }}
           >
-            <Cpu size={18} color="#ffffff" strokeWidth={2.2} />
+            <Cpu size={18} color={tokens.surface} strokeWidth={2.2} />
           </span>
           <div>
             <h1 className="text-lg font-semibold leading-tight">图灵测试平台</h1>
-            <div className="text-xs" style={{ color: 'var(--text-muted)' }}>
-              系统规格测试平台 · 脚手架
-            </div>
+            <div className="text-xs text-text-muted">系统规格测试平台 · 脚手架</div>
           </div>
         </div>
 
@@ -97,12 +96,10 @@ export default function Login() {
         </Form>
 
         {error && (
-          <div className="mt-3 text-xs" style={{ color: 'var(--danger)' }}>
-            {error}
-          </div>
+          <div className="mt-3 text-xs text-danger">{error}</div>
         )}
 
-        <div className="mt-6 text-xs" style={{ color: 'var(--text-muted)' }}>
+        <div className="mt-6 text-xs text-text-muted">
           演示账号：admin / Admin@123（需先执行 backend/sql/init.sql 初始化数据库）
         </div>
       </div>

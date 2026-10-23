@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import BasicLayout from '@/layouts/BasicLayout'
 import { AuthGuard } from '@/components/AuthGuard'
+import { PermGuard } from '@/components/PermGuard'
 import PageLoading from '@/components/PageLoading'
 import Login from '@/pages/login/Login'
 import Dashboard from '@/pages/dashboard/Dashboard'
@@ -14,6 +15,8 @@ const MonacoDemo = lazy(() => import('@/pages/samples/MonacoDemo'))
 const FlowDemo = lazy(() => import('@/pages/samples/FlowDemo'))
 const MermaidDemo = lazy(() => import('@/pages/samples/MermaidDemo'))
 const UserManagement = lazy(() => import('@/pages/system/UserManagement'))
+const RoleManagement = lazy(() => import('@/pages/system/RoleManagement'))
+const MenuManagement = lazy(() => import('@/pages/system/MenuManagement'))
 
 function lazily(element: ReactNode) {
   return <Suspense fallback={<PageLoading />}>{element}</Suspense>
@@ -35,7 +38,30 @@ export const router = createBrowserRouter([
       { path: 'samples/monaco', element: lazily(<MonacoDemo />) },
       { path: 'samples/flow', element: lazily(<FlowDemo />) },
       { path: 'samples/mermaid', element: lazily(<MermaidDemo />) },
-      { path: 'system/users', element: lazily(<UserManagement />) },
+      {
+        path: 'system/users',
+        element: lazily(
+          <PermGuard perm="system:user:list">
+            <UserManagement />
+          </PermGuard>,
+        ),
+      },
+      {
+        path: 'system/roles',
+        element: lazily(
+          <PermGuard perm="system:role:list">
+            <RoleManagement />
+          </PermGuard>,
+        ),
+      },
+      {
+        path: 'system/menus',
+        element: lazily(
+          <PermGuard perm="system:menu:list">
+            <MenuManagement />
+          </PermGuard>,
+        ),
+      },
     ],
   },
   { path: '*', element: <NotFound /> },

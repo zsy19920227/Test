@@ -45,6 +45,7 @@ export interface SysUserItem {
   email: string | null
   status: 0 | 1
   roleCodes: string[]
+  roleIds: number[]
   createTime: string
 }
 
@@ -52,4 +53,78 @@ export interface UserPageQuery {
   current?: number
   size?: number
   keyword?: string
+}
+
+export interface UserCreatePayload {
+  username: string
+  nickname: string
+  email?: string
+  /** 不填则后端使用默认密码 */
+  password?: string
+  roleIds?: number[]
+}
+
+export interface UserUpdatePayload {
+  id: number
+  nickname: string
+  email?: string
+  status: 0 | 1
+  /** null/undefined 表示不调整角色 */
+  roleIds?: number[]
+}
+
+/** 系统角色 */
+export interface SysRoleItem {
+  id: number
+  code: string
+  name: string
+  status: 0 | 1
+  remark: string | null
+  createTime: string
+}
+
+export interface RolePageQuery {
+  current?: number
+  size?: number
+  keyword?: string
+}
+
+export interface RoleCreatePayload {
+  code: string
+  name: string
+  remark?: string
+  menuIds?: number[]
+}
+
+export interface RoleUpdatePayload {
+  id: number
+  name: string
+  remark?: string
+  status: 0 | 1
+  /** null/undefined 表示不调整权限绑定 */
+  menuIds?: number[]
+}
+
+/** 菜单/权限点树节点 */
+export interface SysMenuNode {
+  id: number
+  parentId: number
+  type: 'M' | 'C' | 'F'
+  name: string
+  permission: string | null
+  path: string | null
+  sort: number
+  status: 0 | 1
+  children: SysMenuNode[]
+}
+
+export interface MenuPayload {
+  id?: number
+  parentId: number
+  type: 'M' | 'C' | 'F'
+  name: string
+  permission?: string
+  path?: string
+  sort?: number
+  status?: 0 | 1
 }

@@ -10,7 +10,8 @@
                u.email,
                u.status,
                u.create_time,
-               GROUP_CONCAT(r.code ORDER BY r.code) AS role_codes
+               GROUP_CONCAT(r.code ORDER BY r.code) AS role_codes,
+               GROUP_CONCAT(r.id ORDER BY r.code)  AS role_ids
         FROM sys_user u
         LEFT JOIN sys_user_role ur ON ur.user_id = u.id
         LEFT JOIN sys_role r ON r.id = ur.role_id AND r.deleted = 0 AND r.status = 1

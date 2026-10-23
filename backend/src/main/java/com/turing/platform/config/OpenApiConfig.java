@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * SpringDoc OpenAPI 文档配置。
- * 访问地址（dev）：http://localhost:8080/api/swagger-ui.html
+ * 访问地址（dev）：http://localhost:8081/api/swagger-ui.html
  */
 @Configuration
 public class OpenApiConfig {

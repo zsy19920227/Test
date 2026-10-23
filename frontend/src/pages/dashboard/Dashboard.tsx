@@ -11,17 +11,19 @@ import {
   YAxis,
 } from 'recharts'
 import { Boxes, Cpu, Gauge, Timer } from 'lucide-react'
+import { PageHeader } from '@/components/PageHeader'
 
 /*
  * 以下均为固定字面量示例数据，仅用于界面演示；
  * 真实数据接入后整段删除。禁止随机生成数据。
  */
 
+/** goodDirection：该指标「上升算好」还是「下降算好」，决定 trend 的语义色 */
 const kpis = [
-  { label: '本周测试任务', value: '27', unit: '次', icon: Boxes, trend: '+12%' },
-  { label: '平均 MFU', value: '46.2', unit: '%', icon: Gauge, trend: '+1.8pt' },
-  { label: '算子回归通过率', value: '98.4', unit: '%', icon: Cpu, trend: '+0.6pt' },
-  { label: '推理 P99 TTFT', value: '412', unit: 'ms', icon: Timer, trend: '-18ms' },
+  { label: '本周测试任务', value: '27', unit: '次', icon: Boxes, trend: '+12%', goodDirection: 'up' },
+  { label: '平均 MFU', value: '46.2', unit: '%', icon: Gauge, trend: '+1.8pt', goodDirection: 'up' },
+  { label: '算子回归通过率', value: '98.4', unit: '%', icon: Cpu, trend: '+0.6pt', goodDirection: 'up' },
+  { label: '推理 P99 TTFT', value: '412', unit: 'ms', icon: Timer, trend: '-18ms', goodDirection: 'down' },
 ]
 
 /** 各框架「每卡吞吐」随并发变化（tokens/s/卡） */
@@ -122,30 +124,34 @@ const runColumns: TableColumnsType<RecentRun> = [
 export default function Dashboard() {
   return (
     <div className="flex flex-col gap-5">
-      <h1 className="sr-only">工作台</h1>
+      <PageHeader title="工作台" description="测试任务与推理性能全局概览" />
       {/* KPI 卡：完全对称统一，无任何强调差异 */}
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
-        {kpis.map(({ label, value, unit, icon: Icon, trend }) => (
-          <Card key={label} size="small" styles={{ body: { padding: 16 } }}>
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                  {label}
+        {kpis.map(({ label, value, unit, icon: Icon, trend, goodDirection }) => {
+          // 实际方向是否利好该指标：利好=绿，不利=红（TTFT 下降即利好 → 绿）
+          const direction = trend.startsWith('+') ? 'up' : 'down'
+          const good = direction === goodDirection
+          return (
+            <Card key={label} size="small" styles={{ body: { padding: 16 } }}>
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="text-xs text-text-muted">{label}</div>
+                  <div className="tabular mt-2 text-2xl">
+                    {value}
+                    <span className="ml-1 text-xs text-text-muted">{unit}</span>
+                  </div>
                 </div>
-                <div className="tabular mt-2 text-2xl">
-                  {value}
-                  <span className="ml-1 text-xs" style={{ color: 'var(--text-muted)' }}>
-                    {unit}
-                  </span>
-                </div>
+                <Icon size={18} className="text-text-muted" />
               </div>
-              <Icon size={18} style={{ color: 'var(--text-muted)' }} />
-            </div>
-            <div className="tabular mt-2 text-xs" style={{ color: 'var(--fw-green)' }}>
-              {trend}
-            </div>
-          </Card>
-        ))}
+              <div
+                className="tabular mt-2 text-xs"
+                style={{ color: good ? 'var(--fw-green)' : 'var(--danger)' }}
+              >
+                {trend}
+              </div>
+            </Card>
+          )
+        })}
       </div>
 
       {/* 主图表：折线默认，X 轴为并发用户数 */}
@@ -227,9 +233,7 @@ export default function Dashboard() {
         />
       </Card>
 
-      <div className="text-xs" style={{ color: 'var(--text-muted)' }}>
-        示例数据仅用于界面演示
-      </div>
+      <div className="text-xs text-text-muted">示例数据仅用于界面演示</div>
     </div>
   )
 }

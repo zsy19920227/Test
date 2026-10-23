@@ -15,5 +15,6 @@ public record SysUserVO(
         String email,
         Integer status,
         List<String> roleCodes,
+        List<Long> roleIds,
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime createTime) {
 }

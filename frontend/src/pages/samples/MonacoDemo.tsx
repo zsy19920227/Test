@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Card, Segmented, Spin, Typography } from 'antd'
 import Editor from '@monaco-editor/react'
+import { PageHeader } from '@/components/PageHeader'
 
 const samples: Record<string, { language: string; code: string }> = {
   JSON: {
@@ -60,11 +61,11 @@ export default function MonacoDemo() {
   }
 
   return (
-    <>
-      <h1 className="sr-only">Monaco 编辑器示例</h1>
+    <div className="flex flex-col gap-5">
+      <PageHeader title="Monaco 编辑器" description="代码编辑器集成示例" />
       <Card
         size="small"
-        title="Monaco Editor"
+        title="代码示例"
         extra={
           <Segmented
             options={Object.keys(samples)}
@@ -97,6 +98,6 @@ export default function MonacoDemo() {
           当前字符数：{code.length} · 编辑器内容仅存于前端内存，未持久化
         </Typography.Text>
       </Card>
-    </>
+    </div>
   )
 }

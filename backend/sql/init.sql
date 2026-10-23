@@ -101,12 +101,22 @@ INSERT INTO sys_role (id, code, name, status, remark) VALUES
 
 -- 菜单与权限点
 INSERT INTO sys_menu (id, parent_id, type, name, permission, path, sort, status) VALUES
-(1, 0, 'M', '系统管理',   NULL,                '/system',       1, 1),
-(2, 1, 'C', '用户管理',   NULL,                '/system/users', 1, 1),
+(1, 0, 'M', '系统管理',   NULL,                 '/system',       1, 1),
+(2, 1, 'C', '用户管理',   NULL,                 '/system/users', 1, 1),
 (3, 2, 'F', '用户查询',   'system:user:list',   NULL,           1, 1),
 (4, 2, 'F', '用户新增',   'system:user:add',    NULL,           2, 1),
 (5, 2, 'F', '用户编辑',   'system:user:edit',   NULL,           3, 1),
-(6, 2, 'F', '用户删除',   'system:user:remove', NULL,           4, 1);
+(6, 2, 'F', '用户删除',   'system:user:remove', NULL,           4, 1),
+(7, 1, 'C', '角色管理',   NULL,                 '/system/roles', 2, 1),
+(8, 7, 'F', '角色查询',   'system:role:list',   NULL,           1, 1),
+(9, 7, 'F', '角色新增',   'system:role:add',    NULL,           2, 1),
+(10, 7, 'F', '角色编辑',   'system:role:edit',   NULL,           3, 1),
+(11, 7, 'F', '角色删除',   'system:role:remove', NULL,           4, 1),
+(12, 1, 'C', '菜单管理',   NULL,                 '/system/menus', 3, 1),
+(13, 12, 'F', '菜单查询',  'system:menu:list',   NULL,          1, 1),
+(14, 12, 'F', '菜单新增',  'system:menu:add',    NULL,          2, 1),
+(15, 12, 'F', '菜单编辑',  'system:menu:edit',   NULL,          3, 1),
+(16, 12, 'F', '菜单删除',  'system:menu:remove', NULL,          4, 1);
 
 -- 用户（BCrypt 哈希由 bcryptjs cost=10 实际生成）
 INSERT INTO sys_user (id, username, password, nickname, email, status) VALUES
@@ -121,4 +131,6 @@ INSERT INTO sys_user_role (user_id, role_id) VALUES
 -- 角色-权限：admin 全量，viewer 仅查询
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES
 (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6),
+(1, 7), (1, 8), (1, 9), (1, 10), (1, 11),
+(1, 12), (1, 13), (1, 14), (1, 15), (1, 16),
 (2, 1), (2, 2), (2, 3);

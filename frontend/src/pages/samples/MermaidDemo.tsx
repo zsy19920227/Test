@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react'
 import { Alert, Card, Input, Segmented } from 'antd'
 import mermaid from 'mermaid'
+import { tokens } from '@/styles/tokens'
+import { PageHeader } from '@/components/PageHeader'
 
 mermaid.initialize({
   startOnLoad: false,
   theme: 'default',
   themeVariables: {
-    primaryColor: '#eff6ff',
-    primaryTextColor: '#1e293b',
-    primaryBorderColor: '#93c5fd',
-    lineColor: '#64748b',
-    secondaryColor: '#f1f5f9',
-    tertiaryColor: '#f8fafc',
-    background: '#ffffff',
+    primaryColor: tokens.blueTint,
+    primaryTextColor: tokens.text,
+    primaryBorderColor: tokens.blueBorder,
+    lineColor: tokens.textMuted,
+    secondaryColor: tokens.muted,
+    tertiaryColor: tokens.bg,
+    background: tokens.surface,
     fontSize: '13px',
   },
 })
@@ -72,11 +74,11 @@ export default function MermaidDemo() {
   }, [code])
 
   return (
-    <>
-      <h1 className="sr-only">Mermaid 图表示例</h1>
+    <div className="flex flex-col gap-5">
+      <PageHeader title="Mermaid 图表" description="Mermaid DSL 图表渲染示例" />
       <Card
         size="small"
-        title="Mermaid 图表"
+        title="图表编辑与预览"
         extra={
           <Segmented
             options={Object.keys(presets)}
@@ -91,7 +93,7 @@ export default function MermaidDemo() {
       >
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           <div>
-            <div className="mb-2 text-xs" style={{ color: 'var(--text-muted)' }}>
+            <div className="mb-2 text-xs text-text-muted">
               图表定义（Mermaid DSL，可编辑）
             </div>
             <Input.TextArea
@@ -105,7 +107,7 @@ export default function MermaidDemo() {
             />
           </div>
           <div>
-            <div className="mb-2 text-xs" style={{ color: 'var(--text-muted)' }}>
+            <div className="mb-2 text-xs text-text-muted">
               渲染结果
             </div>
             {error ? (
@@ -115,7 +117,7 @@ export default function MermaidDemo() {
                 className="flex min-h-[320px] items-center justify-center overflow-auto p-3"
                 style={{
                   border: '1px solid var(--surface-border)',
-                  borderRadius: 4,
+                  borderRadius: 'var(--radius-sm)',
                   background: 'var(--surface)',
                 }}
                 dangerouslySetInnerHTML={{ __html: svg }}
@@ -124,6 +126,6 @@ export default function MermaidDemo() {
           </div>
         </div>
       </Card>
-    </>
+    </div>
   )
 }

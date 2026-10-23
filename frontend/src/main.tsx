@@ -8,6 +8,7 @@ import 'dayjs/locale/zh-cn'
 import { RouterProvider } from 'react-router-dom'
 import { store } from '@/store'
 import { router } from '@/router'
+import { tokens } from '@/styles/tokens'
 import '@/styles/index.css'
 
 dayjs.locale('zh-cn')
@@ -24,13 +25,14 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         theme={{
           algorithm: theme.defaultAlgorithm,
           token: {
-            colorPrimary: '#1e40af',
-            colorBgBase: '#f8fafc',
-            colorBgContainer: '#ffffff',
-            colorBgElevated: '#ffffff',
-            colorBorder: '#cbd5e1',
-            colorBorderSecondary: '#e2e8f0',
+            colorPrimary: tokens.primary,
+            colorBgBase: tokens.bg,
+            colorBgContainer: tokens.surface,
+            colorBgElevated: tokens.surface,
+            colorBorder: tokens.borderStrong,
+            colorBorderSecondary: tokens.surfaceBorder,
             borderRadius: 6,
+            borderRadiusLG: 8,
             fontSize: 14,
             fontFamily: "'HarmonyOS Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif",
           },

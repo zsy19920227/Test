@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class CreateSysUserDTO {
 
@@ -20,4 +22,7 @@ public class CreateSysUserDTO {
 
     /** 不填则使用默认密码 Turing@123 */
     private String password;
+
+    /** 分配的角色 ID 列表（可为空） */
+    private List<Long> roleIds;
 }
